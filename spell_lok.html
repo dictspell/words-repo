@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spelling Flashcards</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        #inputWord {
+            font-size: 1.5rem;
+            margin: 20px;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            width: calc(100% - 40px);
+            max-width: 400px;
+        }
+        .button {
+            font-size: 1.5rem;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        #practiceBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #practiceBtn:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        #dictionaryBtn {
+            background-color: #008CBA;
+            color: white;
+        }
+        #dictionaryBtn:hover {
+            background-color: #007B9E;
+            transform: scale(1.05);
+        }
+        #submitBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #submitBtn:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        #pronounceBtn {
+            background-color: #008CBA;
+            color: white;
+        }
+        #pronounceBtn:hover {
+            background-color: #007B9E;
+            transform: scale(1.05);
+        }
+        #dictionaryPronounceBtn {
+            background-color: #008CBA;
+            color: white;
+        }
+        #dictionaryPronounceBtn:hover {
+            background-color: #007B9E;
+            transform: scale(1.05);
+	}
+        #dictionaryReadMeaningBtn{
+            background-color: #007BFF;
+            color: white;
+        }
+        #dictionaryReadMeaningBtn:hover {
+            background-color: #4B0082;
+            transform: scale(1.05);
+        }
+        #flashcard {
+            font-size: 2.5rem;
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+            transition: transform 0.3s ease;
+        }
+        #flashcard.highlight {
+            background-color: #ffeb3b;
+            color: #000;
+        }
+        #definition, #dictionaryDefinition {
+            font-size: 1.2rem;
+            margin: 20px;
+            color: #555;
+        }
+        #imageContainer img, #dictionaryImageContainer img {
+            margin: 10px;
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #score, #review {
+            font-size: 2rem;
+            margin: 20px;
+        }
+        #review h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        .result-item {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .correct {
+            background-color: #e0f7e9;
+            color: #2e7d32;
+        }
+        .incorrect {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        #calendar {
+            margin: 20px;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+        }
+        .day {
+            margin: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .day:hover {
+            background-color: #f1f1f1;
+        }
+        .completed {
+            background-color: #d4edda;
+        }
+        .not-completed {
+            background-color: #f8d7da;
+        }
+        #dictionaryInputWord {
+            font-size: 1.5rem;
+            margin: 20px;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            width: calc(100% - 40px);
+            max-width: 400px; /* Increase the max-width to enlarge the input box */
+        }
+    </style>
+</head>
+<body>
+    <div id="landingPage">
+        <h1>Spelling Flashcards</h1>
+        <button id="practiceBtn" class="button" onclick="displayReview()">Spelling Practice</button>
+        <button id="dictionaryBtn" class="button" onclick="loadDictionary()">Dictionary</button>
+	<!-- <button id="clearResultsBtn" class="button" onclick="clearLocalStorage()">Clear Results</button> -->
+        <div id="calendar"></div>
+    </div>
+
+    <div id="practicePage" class="hidden">
+        <h1>Spelling Practice</h1>
+        <div id="flashcard"></div>
+        <div id="definition"></div>
+        <div id="imageContainer"></div>
+        <input type="text" id="inputWord" placeholder="Type the word here" autocomplete="off" disabled>
+        <button id="submitBtn" class="button" onclick="submitWord()" disabled>Submit</button>
+        <button id="pronounceBtn" class="button" onclick="pronounceWord()" disabled>Pronounce</button>
+<button id="dictionaryReadMeaningBtn" class="button" onclick="readMeaning()">Read Meaning</button>
+        <div id="score"></div>
+        <div id="review"></div>
+    </div>
+
+    <div id="dictionaryPage" class="hidden">
+        <h1>Dictionary</h1>
+        <input type="text" id="dictionaryInputWord" placeholder="Enter a word">
+        <button id="dictionarySubmitBtn" class="button" onclick="lookupWord()">Lookup</button>
+        <div id="dictionaryDefinition"></div>
+        <div id="dictionaryImageContainer"></div>
+        <!-- <button id="dictionaryPronounceBtn" class="button" onclick="pronounceWord()" disabled>Pronounce</button> -->
+        <button id="dictionaryPronounceBtn" class="button" onclick="pronounceWord()" disabled>Pronounce</button>
+<button id="dictionaryReadMeaningBtn" class="button" onclick="readMeaning()">Read Meaning</button>
+    </div>
+
+    <script src="wordslok.js"></script>
+    <script>
+        let currentWordIndex = 0;
+        let score = 0;
+        let results = [];
+        let pronunciationUrl = '';
+        let currentSet = [];
+        let completedDays = JSON.parse(localStorage.getItem('completedDays')) || {};
+
+        const pexelsApiKey = 'uDHvhFVVKra9Fw9OXqJCWAS3AKfpc6TKOkaCslEPkb39DDsMYHEvBMfK';
+	    const gapiKey = 'AIzaSyDpskMR-osfS-Dw7xpycwXjJt2hmIlfu3M'; 
+
+	    function loadPractice() {
+            document.getElementById('landingPage').classList.add('hidden');
+            document.getElementById('practicePage').classList.remove('hidden');
+            updateCalendar();
+        } 
+
+        function loadDictionary() {
+            document.getElementById('landingPage').classList.add('hidden');
+            document.getElementById('dictionaryPage').classList.remove('hidden');
+        }
+
+        function calculateDisappearanceTime(word) {
+            const length = word.length;
+            return Math.max(5, Math.min(10, Math.floor(length / 2)));
+        }
+
+
+        function submitWord() {
+            const inputWord = document.getElementById('inputWord').value.toLowerCase().trim();
+            const currentWord = currentSet.words[currentWordIndex].toLowerCase();
+            if (inputWord === currentWord) {
+                score++;
+                results.push({ word: currentWord, correct: true });
+            } else {
+                results.push({ word: currentWord, correct: false });
+            }
+            currentWordIndex++;
+            document.getElementById('inputWord').value = '';
+            showWord();
+        }
+
+        function pronounceWord() {
+            //const word = document.getElementById('inputWord').value || document.getElementById('dictionaryInputWord').value || currentSet.words[currentWordIndex].toLowerCase();
+            const word = document.getElementById('dictionaryInputWord').value || currentSet.words[currentWordIndex].toLowerCase();
+            const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${gapiKey}`;
+            
+            const request = {
+                input: { text: word },
+                voice: { languageCode: 'en-GB', name: 'en-GB-Studio-C' },
+                audioConfig: { audioEncoding: 'MP3' }
+            };
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(request)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const audioContent = data.audioContent;
+                const audio = new Audio('data:audio/mp3;base64,' + audioContent);
+                audio.play();
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function displayReview() {
+            const reviewContainer = document.getElementById('review');
+            reviewContainer.innerHTML = '';
+            const reviewTitle = document.createElement('h2');
+            reviewTitle.innerText = 'Review';
+            reviewContainer.appendChild(reviewTitle);
+            results.forEach(result => {
+                const resultItem = document.createElement('div');
+                resultItem.classList.add('result-item');
+                resultItem.classList.add(result.correct ? 'correct' : 'incorrect');
+                resultItem.innerText = `${result.word} - ${result.correct ? 'Correct' : 'Incorrect'}`;
+                reviewContainer.appendChild(resultItem);
+            });
+        }
+
+        function lookupWord() {
+            const inputWord = document.getElementById('dictionaryInputWord').value.toLowerCase().trim();
+            if (inputWord) {
+                document.getElementById('dictionaryDefinition').innerText = '';
+                document.getElementById('dictionaryImageContainer').innerHTML = '';
+                fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${inputWord}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const definition = data[0]?.meanings[0]?.definitions[0]?.definition || 'Definition not found.';
+                        document.getElementById('dictionaryDefinition').innerText = definition;
+            pronounceDefinition(definition); // Call the function to pronounce the definition
+     		document.getElementById('pronounceBtn').disabled = true;
+                       // pronunciationUrl = data[0]?.phonetics[0]?.audio || '';
+                        //document.getElementById('dictionaryPronounceBtn').disabled = !pronunciationUrl;
+                    })
+                    .catch(() => {
+                        document.getElementById('dictionaryDefinition').innerText = 'Definition not found.';
+                    });
+	        document.getElementById('dictionaryPronounceBtn').disabled = false;
+     		document.getElementById('pronounceBtn').disabled = false;
+                fetchPexelsImages(inputWord, 'dictionaryImageContainer');
+            }
+        }
+
+        function fetchPexelsImages(query, containerId) {
+            const imageContainer = document.getElementById(containerId);
+            imageContainer.innerHTML = '';
+            fetch(`https://api.pexels.com/v1/search?query=${query}&per_page=3`, {
+                headers: {
+                    Authorization: pexelsApiKey
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.photos.forEach(photo => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = photo.src.medium;
+                    imageContainer.appendChild(imgElement);
+                });
+            })
+            .catch(() => {
+                console.error('Error fetching images from Pexels');
+            });
+        }
+
+        function updateCalendar() {
+            const calendar = document.getElementById('calendar');
+            calendar.innerHTML = '';
+            words.forEach(entry => {
+                const dayElement = document.createElement('div');
+                dayElement.classList.add('day');
+                const isCompleted = completedDays[entry.day];
+                dayElement.classList.add(isCompleted ? 'completed' : 'not-completed');
+                dayElement.innerText = entry.day;
+                dayElement.onclick = () => loadWordsForDay(entry.day);
+                calendar.appendChild(dayElement);
+            });
+        }
+
+function showWord() {
+    if (currentWordIndex >= currentSet.words.length) {
+        document.getElementById('score').innerText = `Final Score: ${score}/${currentSet.words.length}`;
+        displayReview();
+        completedDays[currentSet.day] = score === currentSet.words.length;
+        localStorage.setItem('completedDays', JSON.stringify(completedDays));
+        updateCalendar();
+        return;
+    }
+
+    const currentWord = currentSet.words[currentWordIndex];
+    const flashcard = document.getElementById('flashcard');
+    flashcard.innerText = currentWord;
+    flashcard.classList.add('highlight');
+    flashcard.style.display = 'block';
+    document.getElementById('inputWord').disabled = true;
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('pronounceBtn').disabled = true;
+    document.getElementById('definition').innerText = '';
+    document.getElementById('imageContainer').innerHTML = '';
+
+    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${currentWord}`)
+        .then(response => response.json())
+        .then(data => {
+            const definition = data[0]?.meanings[0]?.definitions[0]?.definition || 'Definition not found.';
+            document.getElementById('definition').innerText = definition;
+            pronunciationUrl = data[0]?.phonetics[0]?.audio || '';
+		pronounceWord();
+            //pronounceDefinition(definition); // Call the function to pronounce the definition
+        })
+        .catch(() => {
+            document.getElementById('definition').innerText = 'Definition not found.';
+        });
+
+    fetchPexelsImages(currentWord, 'imageContainer');
+
+    setTimeout(() => {
+        flashcard.classList.remove('highlight');
+        flashcard.innerText = '';
+        document.getElementById('inputWord').disabled = false;
+        document.getElementById('submitBtn').disabled = false;
+        document.getElementById('pronounceBtn').disabled = false;
+        document.getElementById('inputWord').focus();
+    }, calculateDisappearanceTime(currentWord) * 1000);
+}
+
+function pronounceDefinition(definition) {
+    const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${gapiKey}`;
+
+    const request = {
+        input: { text: definition },
+        voice: { languageCode: 'en-GB', name: 'en-GB-Studio-C' },
+        audioConfig: { audioEncoding: 'MP3' }
+    };
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(request)
+    })
+    .then(response => response.json())
+    .then(data => {
+        const audioContent = data.audioContent;
+        const audio = new Audio('data:audio/mp3;base64,' + audioContent);
+        audio.play();
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function clearLocalStorage() {
+    localStorage.removeItem('completedDays');
+    // Optionally, update the calendar to reflect the cleared results
+    updateCalendar();
+}
+
+function readMeaning() {
+            const definition = document.getElementById('definition').innerText || document.getElementById('dictionaryDefinition').innerText;
+            if (definition) {
+                pronounceDefinition(definition);
+            }
+        }
+
+        function loadWordsForDay(day) {
+            currentSet = words.find(entry => entry.day === day);
+            currentWordIndex = 0;
+            score = 0;
+            results = [];
+            document.getElementById('landingPage').classList.add('hidden');
+            document.getElementById('practicePage').classList.remove('hidden');
+            showWord();
+        }
+
+        function loadCalendar() {
+            updateCalendar();
+        }
+
+        document.addEventListener('DOMContentLoaded', loadCalendar);
+
+document.addEventListener('DOMContentLoaded', () => {
+            const clearStorageButton = document.createElement('button');
+            clearStorageButton.textContent = 'Clear Results';
+            clearStorageButton.className = 'button';
+            clearStorageButton.style.backgroundColor = '#f44336'; // Red color for the button
+            clearStorageButton.style.color = 'white';
+            clearStorageButton.addEventListener('click', clearLocalStorage);
+            document.getElementById('landingPage').appendChild(clearStorageButton);
+        });
+
+    </script>
+</body>
+</html>
+
