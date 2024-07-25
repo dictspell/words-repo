@@ -34,5 +34,16 @@ const words = [
     { day: '2024-08-17', words: ["How", "do", "we", "play", "with", "these", "blocks", "and", "toys"] },
     { day: '2024-08-18', words: ["What", "do", "you", "love", "to", "eat", "these"] },
     { day: '2024-08-19', words: ["Who", "likes", "to", "play", "outside", "with", "these", "friends"] },
-    { day: '2024-08-20', words: ["Where", "does", "that", "bird", "fly", "in", "the", "sky"] }
+    { day: '2024-08-20', words: ["Where", "does", "that", "bird", "fly", "in", "the", "sky"] },
+    { day: '2024-08-21', words: ["We", "go", "for", "a", "walk", "in", "the", "park"] },
+    { day: '2024-08-22', words: ["The", "dog", "likes", "to", "chase", "the", "ball"] },
+    { day: '2024-08-23', words: ["I", "paint", "a", "picture", "with", "colors"] },
+    { day: '2024-08-24', words: ["The", "cake", "is", "for", "a", "birthday"] },
+    { day: '2024-08-25', words: ["She", "puts", "on", "her", "new", "dress"] },
+    { day: '2024-08-26', words: ["The", "cat", "likes", "to", "climb", "trees"] },
+    { day: '2024-08-27', words: ["We", "have", "a", "picnic", "in", "the", "park"] },
+    { day: '2024-08-28', words: ["The", "sun", "is", "shining", "brightly", "today"] },
+    { day: '2024-08-29', words: ["I", "ride", "my", "bike", "to", "the", "store"] },
+    { day: '2024-08-30', words: ["She", "reads", "a", "book", "every", "night"] },
+    { day: '2024-08-31', words: ["The", "train", "goes", "fast", "on", "the", "tracks"] }
 ];
