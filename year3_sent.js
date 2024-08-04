@@ -30,5 +30,5 @@ const words = [
     { day: '2024-10-29', words: ["He", "caught", "a", "beautiful", "butterfly", "in", "a", "net", "and", "released", "it", "He caught a beautiful butterfly in a net and released it"] },
     { day: '2024-10-30', words: ["They", "went", "fishing", "at", "the", "lake", "and", "caught", "several", "fish", "They went fishing at the lake and caught several fish"] },
     { day: '2024-10-31', words: ["The", "pumpkin", "was", "carved", "into", "a", "spooky", "jack-o'-lantern", "with", "a", "big", "smile", "The pumpkin was carved into a spooky jack-o'-lantern with a big smile"] }
-]
+];
   
