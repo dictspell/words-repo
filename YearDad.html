@@ -236,24 +236,22 @@
             const currentWord = currentSet.words[currentWordIndex].toLowerCase();
             
             let resultHtml = '';
-            for (let i = 0; i < currentWord.length; i++) {
+            let correctWordHtml = '';
+            for (let i = 0; i < Math.max(inputWord.length, currentWord.length); i++) {
                 if (inputWord[i] === currentWord[i]) {
-                    resultHtml += `<span>${inputWord[i]}</span>`;
+                    resultHtml += `<span>${inputWord[i] || '_'}</span>`;
+                    correctWordHtml += `<span>${currentWord[i] || '_'}</span>`;
                 } else {
                     resultHtml += `<span style="color: red;">${inputWord[i] || '_'}</span>`;
-                }
-            }
-            if (inputWord.length > currentWord.length) {
-                for (let i = currentWord.length; i < inputWord.length; i++) {
-                    resultHtml += `<span style="color: red;">${inputWord[i]}</span>`;
+                    correctWordHtml += `<span>${currentWord[i] || '_'}</span>`;
                 }
             }
 
             if (inputWord === currentWord) {
                 score++;
-                results.push({ word: currentWord, correct: true });
+                results.push({ word: correctWordHtml, userWord: resultHtml, correct: true });
             } else {
-                results.push({ word: resultHtml, correct: false });
+                results.push({ word: correctWordHtml, userWord: resultHtml, correct: false });
             }
 
             currentWordIndex++;
@@ -298,7 +296,17 @@
                 const resultItem = document.createElement('div');
                 resultItem.classList.add('result-item');
                 resultItem.classList.add(result.correct ? 'correct' : 'incorrect');
-                resultItem.innerHTML = `${result.word} - ${result.correct ? 'Correct' : 'Incorrect'}`;
+
+                if (result.correct) {
+                    resultItem.innerHTML = `${result.word} - Correct`;
+                } else {
+                    resultItem.innerHTML = `
+                        <div><strong>Your answer:</strong> ${result.userWord}</div>
+                        <div><strong>Correct answer:</strong> ${result.word}</div>
+                        - Incorrect
+                    `;
+                }
+                
                 reviewContainer.appendChild(resultItem);
             });
         }
