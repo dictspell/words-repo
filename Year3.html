@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spelling Flashcards</title>
+    <title>Spelling Flashcards v1.0</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
     <style>
         body {
@@ -111,48 +111,11 @@
             margin: 20px;
             color: #555;
         }
-        <!-- original
-	    #imageContainer img, #dictionaryImageContainer img {
-            margin: 10px;
-            max-width: 300px;
-            max-height: 300px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        } -->
-	<!-- grid --> 
 	    #imageContainer, #dictionaryImageContainer {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
-}   
-	    
-	    #imageContainer, #dictionaryImageContainer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}   
-	    
-
-<!-- Flexbox  
-	    #imageContainer, #dictionaryImageContainer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-#imageContainer img, #dictionaryImageContainer img {
-    margin: 10px;
-    max-width: calc(100% / 3 - 20px); /* Adjust the number of images per row */
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
--->
-
-
-	    
-	    
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }   
         #score, #review {
             font-size: 2rem;
             margin: 20px;
@@ -205,7 +168,7 @@
             border: 2px solid #ccc;
             border-radius: 5px;
             width: calc(100% - 40px);
-            max-width: 400px; /* Increase the max-width to enlarge the input box */
+            max-width: 400px;
         }
     </style>
 </head>
@@ -214,7 +177,6 @@
         <h1>Spelling Flashcards</h1>
         <button id="practiceBtn" class="button" onclick="displayReview()">Spelling Practice</button>
         <button id="dictionaryBtn" class="button" onclick="loadDictionary()">Dictionary</button>
-	<!-- <button id="clearResultsBtn" class="button" onclick="clearLocalStorage()">Clear Results</button> -->
         <div id="calendar"></div>
     </div>
 
@@ -226,7 +188,7 @@
         <input type="text" id="inputWord" placeholder="Type the word here" autocomplete="off" disabled>
         <button id="submitBtn" class="button" onclick="submitWord()" disabled>Submit</button>
         <button id="pronounceBtn" class="button" onclick="pronounceWord()" disabled>Pronounce</button>
-<button id="dictionaryReadMeaningBtn" class="button" onclick="readMeaning()">Read Meaning</button>
+        <button id="dictionaryReadMeaningBtn" class="button" onclick="readMeaning()">Read Meaning</button>
         <div id="score"></div>
         <div id="review"></div>
     </div>
@@ -237,14 +199,11 @@
         <button id="dictionarySubmitBtn" class="button" onclick="lookupWord()">Lookup</button>
         <div id="dictionaryDefinition"></div>
         <div id="dictionaryImageContainer"></div>
-        <!-- <button id="dictionaryPronounceBtn" class="button" onclick="pronounceWord()" disabled>Pronounce</button> -->
         <button id="dictionaryPronounceBtn" class="button" onclick="pronounceWord()" disabled>Pronounce</button>
-<button id="dictionaryReadMeaningBtn" class="button" onclick="readMeaning()">Read Meaning</button>
+        <button id="dictionaryReadMeaningBtn" class="button" onclick="readMeaning()">Read Meaning</button>
     </div>
 
-    <!-- <script src="words_year3.js"></script> 
-	<script src="lam_sent.js"></script> -->
-	<script src="year3_sent.js"></script> 
+    <script src="year3_sent.js"></script> 
     <script>
         let currentWordIndex = 0;
         let score = 0;
@@ -272,23 +231,35 @@
             return Math.max(5, Math.min(10, Math.floor(length / 2)));
         }
 
-
         function submitWord() {
             const inputWord = document.getElementById('inputWord').value.toLowerCase().trim();
             const currentWord = currentSet.words[currentWordIndex].toLowerCase();
+            
+            let resultHtml = '';
+            let correctWordHtml = '';
+            for (let i = 0; i < Math.max(inputWord.length, currentWord.length); i++) {
+                if (inputWord[i] === currentWord[i]) {
+                    resultHtml += `<span>${inputWord[i] || '_'}</span>`;
+                    correctWordHtml += `<span>${currentWord[i] || '_'}</span>`;
+                } else {
+                    resultHtml += `<span style="color: red;">${inputWord[i] || '_'}</span>`;
+                    correctWordHtml += `<span>${currentWord[i] || '_'}</span>`;
+                }
+            }
+
             if (inputWord === currentWord) {
                 score++;
-                results.push({ word: currentWord, correct: true });
+                results.push({ word: correctWordHtml, userWord: resultHtml, correct: true });
             } else {
-                results.push({ word: currentWord, correct: false });
+                results.push({ word: correctWordHtml, userWord: resultHtml, correct: false });
             }
+
             currentWordIndex++;
             document.getElementById('inputWord').value = '';
             showWord();
         }
 
         function pronounceWord() {
-            //const word = document.getElementById('inputWord').value || document.getElementById('dictionaryInputWord').value || currentSet.words[currentWordIndex].toLowerCase();
             const word = document.getElementById('dictionaryInputWord').value || currentSet.words[currentWordIndex].toLowerCase();
             const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${gapiKey}`;
             
@@ -320,11 +291,22 @@
             const reviewTitle = document.createElement('h2');
             reviewTitle.innerText = 'Review';
             reviewContainer.appendChild(reviewTitle);
+
             results.forEach(result => {
                 const resultItem = document.createElement('div');
                 resultItem.classList.add('result-item');
                 resultItem.classList.add(result.correct ? 'correct' : 'incorrect');
-                resultItem.innerText = `${result.word} - ${result.correct ? 'Correct' : 'Incorrect'}`;
+
+                if (result.correct) {
+                    resultItem.innerHTML = `${result.word} - Correct`;
+                } else {
+                    resultItem.innerHTML = `
+                        <div><strong>Your answer:</strong> ${result.userWord}</div>
+                        <div><strong>Correct answer:</strong> ${result.word}</div>
+                        - Incorrect
+                    `;
+                }
+                
                 reviewContainer.appendChild(resultItem);
             });
         }
@@ -339,16 +321,13 @@
                     .then(data => {
                         const definition = data[0]?.meanings[0]?.definitions[0]?.definition || 'Definition not found.';
                         document.getElementById('dictionaryDefinition').innerText = definition;
-            pronounceDefinition(definition); // Call the function to pronounce the definition
-     		document.getElementById('pronounceBtn').disabled = true;
-                       // pronunciationUrl = data[0]?.phonetics[0]?.audio || '';
-                        //document.getElementById('dictionaryPronounceBtn').disabled = !pronunciationUrl;
+                        pronounceDefinition(definition);
                     })
                     .catch(() => {
                         document.getElementById('dictionaryDefinition').innerText = 'Definition not found.';
                     });
-	        document.getElementById('dictionaryPronounceBtn').disabled = false;
-     		document.getElementById('pronounceBtn').disabled = false;
+                document.getElementById('dictionaryPronounceBtn').disabled = false;
+                document.getElementById('pronounceBtn').disabled = false;
                 fetchPexelsImages(inputWord, 'dictionaryImageContainer');
             }
         }
@@ -388,84 +367,82 @@
             });
         }
 
-function showWord() {
-    if (currentWordIndex >= currentSet.words.length) {
-        document.getElementById('score').innerText = `Final Score: ${score}/${currentSet.words.length}`;
-        displayReview();
-        completedDays[currentSet.day] = score === currentSet.words.length;
-        localStorage.setItem('completedDays', JSON.stringify(completedDays));
-        updateCalendar();
-        return;
-    }
+        function showWord() {
+            if (currentWordIndex >= currentSet.words.length) {
+                document.getElementById('score').innerText = `Final Score: ${score}/${currentSet.words.length}`;
+                displayReview();
+                completedDays[currentSet.day] = score === currentSet.words.length;
+                localStorage.setItem('completedDays', JSON.stringify(completedDays));
+                updateCalendar();
+                return;
+            }
 
-    const currentWord = currentSet.words[currentWordIndex];
-    const flashcard = document.getElementById('flashcard');
-    flashcard.innerText = currentWord;
-    flashcard.classList.add('highlight');
-    flashcard.style.display = 'block';
-    document.getElementById('inputWord').disabled = true;
-    document.getElementById('submitBtn').disabled = true;
-    document.getElementById('pronounceBtn').disabled = true;
-    document.getElementById('definition').innerText = '';
-    document.getElementById('imageContainer').innerHTML = '';
+            const currentWord = currentSet.words[currentWordIndex];
+            const flashcard = document.getElementById('flashcard');
+            flashcard.innerText = currentWord;
+            flashcard.classList.add('highlight');
+            flashcard.style.display = 'block';
+            document.getElementById('inputWord').disabled = true;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('pronounceBtn').disabled = true;
+            document.getElementById('definition').innerText = '';
+            document.getElementById('imageContainer').innerHTML = '';
 
-    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${currentWord}`)
-        .then(response => response.json())
-        .then(data => {
-            const definition = data[0]?.meanings[0]?.definitions[0]?.definition || 'Definition not found.';
-            document.getElementById('definition').innerText = definition;
-            pronunciationUrl = data[0]?.phonetics[0]?.audio || '';
-		pronounceWord();
-            //pronounceDefinition(definition); // Call the function to pronounce the definition
-        })
-        .catch(() => {
-            document.getElementById('definition').innerText = 'Definition not found.';
-        });
+            fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${currentWord}`)
+                .then(response => response.json())
+                .then(data => {
+                    const definition = data[0]?.meanings[0]?.definitions[0]?.definition || 'Definition not found.';
+                    document.getElementById('definition').innerText = definition;
+                    pronunciationUrl = data[0]?.phonetics[0]?.audio || '';
+		            pronounceWord();
+                })
+                .catch(() => {
+                    document.getElementById('definition').innerText = 'Definition not found.';
+                });
 
-    fetchPexelsImages(currentWord, 'imageContainer');
+            fetchPexelsImages(currentWord, 'imageContainer');
 
-    setTimeout(() => {
-        flashcard.classList.remove('highlight');
-        flashcard.innerText = '';
-        document.getElementById('inputWord').disabled = false;
-        document.getElementById('submitBtn').disabled = false;
-        document.getElementById('pronounceBtn').disabled = false;
-        document.getElementById('inputWord').focus();
-    }, calculateDisappearanceTime(currentWord) * 1000);
-}
+            setTimeout(() => {
+                flashcard.classList.remove('highlight');
+                flashcard.innerText = '';
+                document.getElementById('inputWord').disabled = false;
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('pronounceBtn').disabled = false;
+                document.getElementById('inputWord').focus();
+            }, calculateDisappearanceTime(currentWord) * 1000);
+        }
 
-function pronounceDefinition(definition) {
-    const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${gapiKey}`;
+        function pronounceDefinition(definition) {
+            const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${gapiKey}`;
 
-    const request = {
-        input: { text: definition },
-        voice: { languageCode: 'en-GB', name: 'en-GB-Studio-C' },
-        audioConfig: { audioEncoding: 'MP3' }
-    };
+            const request = {
+                input: { text: definition },
+                voice: { languageCode: 'en-GB', name: 'en-GB-Studio-C' },
+                audioConfig: { audioEncoding: 'MP3' }
+            };
 
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(request)
-    })
-    .then(response => response.json())
-    .then(data => {
-        const audioContent = data.audioContent;
-        const audio = new Audio('data:audio/mp3;base64,' + audioContent);
-        audio.play();
-    })
-    .catch(error => console.error('Error:', error));
-}
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(request)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const audioContent = data.audioContent;
+                const audio = new Audio('data:audio/mp3;base64,' + audioContent);
+                audio.play();
+            })
+            .catch(error => console.error('Error:', error));
+        }
 
-function clearLocalStorage() {
-    localStorage.removeItem('completedDays');
-    // Optionally, update the calendar to reflect the cleared results
-    updateCalendar();
-}
+        function clearLocalStorage() {
+            localStorage.removeItem('completedDays');
+            updateCalendar();
+        }
 
-function readMeaning() {
+        function readMeaning() {
             const definition = document.getElementById('definition').innerText || document.getElementById('dictionaryDefinition').innerText;
             if (definition) {
                 pronounceDefinition(definition);
@@ -488,11 +465,11 @@ function readMeaning() {
 
         document.addEventListener('DOMContentLoaded', loadCalendar);
 
-document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => {
             const clearStorageButton = document.createElement('button');
             clearStorageButton.textContent = 'Clear Results';
             clearStorageButton.className = 'button';
-            clearStorageButton.style.backgroundColor = '#f44336'; // Red color for the button
+            clearStorageButton.style.backgroundColor = '#f44336';
             clearStorageButton.style.color = 'white';
             clearStorageButton.addEventListener('click', clearLocalStorage);
             document.getElementById('landingPage').appendChild(clearStorageButton);
