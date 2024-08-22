@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spelling Flashcards v1.0</title>
+    <title>Spelling Flashcards v1.1</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
     <style>
         body {
@@ -239,11 +239,13 @@
             let correctWordHtml = '';
             for (let i = 0; i < Math.max(inputWord.length, currentWord.length); i++) {
                 if (inputWord[i] === currentWord[i]) {
-                    resultHtml += `<span>${inputWord[i] || '_'}</span>`;
-                    correctWordHtml += `<span>${currentWord[i] || '_'}</span>`;
+                    resultHtml += `<span style="color: green;">${inputWord[i] || '_'}</span>`;
+                    correctWordHtml += `<span style="color: green;">${currentWord[i] || '_'}</span>`;
+                } else if (inputWord[i] !== currentWord[i] && inputWord[i] !== undefined) {
+                    resultHtml += `<span style="color: red;">${inputWord[i]}</span>`;
+                    correctWordHtml += `<span style="color: blue;">${currentWord[i] || '_'}</span>`;
                 } else {
-                    resultHtml += `<span style="color: red;">${inputWord[i] || '_'}</span>`;
-                    correctWordHtml += `<span>${currentWord[i] || '_'}</span>`;
+                    correctWordHtml += `<span style="color: blue;">${currentWord[i] || '_'}</span>`;
                 }
             }
 
