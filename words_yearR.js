@@ -1,4 +1,39 @@
 const words = [
+    { day: '2024-01-01', words: ["I feel", "happy today", "We played", "outside"] },
+    { day: '2024-01-02', words: ["She is", "my best friend", "We play", "together"] },
+    { day: '2024-01-03', words: ["He felt", "sad when", "his toy", "broke"] },
+    { day: '2024-01-04', words: ["We had", "fun at", "recess", "on the", "swings"] },
+    { day: '2024-01-05', words: ["She gave", "me a", "big hug", "I felt", "loved"] },
+    { day: '2024-01-06', words: ["I was", "excited to", "see my", "friends"] },
+    { day: '2024-01-07', words: ["He likes", "to draw", "pictures", "of his", "family"] },
+    { day: '2024-01-08', words: ["We made", "a big", "tower with", "blocks"] },
+    { day: '2024-01-09', words: ["She felt", "proud when", "she finished", "her puzzle"] },
+    { day: '2024-01-10', words: ["He was", "happy to", "share his", "snack"] },
+    { day: '2024-01-11', words: ["We saw", "a rainbow", "in the", "sky"] },
+    { day: '2024-01-12', words: ["She made", "a card", "for mom"] },
+    { day: '2024-01-13', words: ["He felt", "scared at", "night but", "his teddy", "was there"] },
+    { day: '2024-01-14', words: ["We had", "a dance", "party"] },
+    { day: '2024-01-15', words: ["She loves", "books about", "animals"] },
+    { day: '2024-01-16', words: ["He built", "a snowman", "with a", "carrot nose"] },
+    { day: '2024-01-17', words: ["We went", "to the", "park", "and played"] },
+    { day: '2024-01-18', words: ["She was", "excited to", "help her", "teacher"] },
+    { day: '2024-01-19', words: ["He gave", "his friend", "a high five"] },
+    { day: '2024-01-20', words: ["We painted", "pictures of", "flowers"] },
+    { day: '2024-01-21', words: ["She felt", "happy when", "her drawing", "was on", "the wall"] },
+    { day: '2024-01-22', words: ["He was", "proud to", "show mom", "his art"] },
+    { day: '2024-01-23', words: ["We had", "a snack", "and talked"] },
+    { day: '2024-01-24', words: ["She likes", "to sing", "songs with", "friends"] },
+    { day: '2024-01-25', words: ["He was", "excited", "to play", "outside"] },
+    { day: '2024-01-26', words: ["We built", "a fort", "with blankets"] },
+    { day: '2024-01-27', words: ["She felt", "brave when", "she tried", "something new"] },
+    { day: '2024-01-28', words: ["He shared", "his toys", "with friends"] },
+    { day: '2024-01-29', words: ["We made", "a puzzle", "together"] },
+    { day: '2024-01-30', words: ["She was", "excited to", "learn about", "seasons"] },
+    { day: '2024-01-31', words: ["He was", "happy to", "see his", "teacher"] }
+];
+
+/*
+const words = [
      { day: '2024-10-01', words: ["Leaves", "fall", "down"] },
     { day: '2024-10-02', words: ["We", "see", "a", "lion"] },
     { day: '2024-10-03', words: ["She", "has", "a", "new", "dress"] },
@@ -52,3 +87,4 @@ const words = [
     { day: '2024-11-20', words: ["Making", "paper", "planes"] }
     ] ;
     
+*/ 
