@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Spelling Flashcards for Kids</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="container-fluid">
+        <ul>
+            <li><strong>Spelling Flashcards</strong></li>
+        </ul>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Practice</a></li>
+            <li><a href="#" role="button">Dictionary</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Welcome Page -->
+    <main class="container">
+        <div class="grid">
+            <section>
+                <hgroup>
+                    <h2>Welcome to Spelling Flashcards</h2>
+                    <h3>Helping kids learn to spell words in a fun way!</h3>
+                </hgroup>
+                <p>Click on 'Practice' to start learning new words or use the dictionary to look up word meanings and pronunciation.</p>
+
+                <figure>
+                    <img src="https://files.oaiusercontent.com/file-ShLhG4v9yPmOdxv0eZ96xI6W?se=2024-09-05T13%3A44%3A29Z&sp=r&sv=2024-08-04&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3D73565e17-34d4-473d-83d5-2f32ac186bfe.webp&sig=e0y0yv9Tk%2BduMMV5uh6xSN3NmQghlQ2iIp8R9/C4TKE%3D" alt="Child learning spelling">
+                    <figcaption><a href="#">A child learning to spell</a></figcaption>
+                </figure>
+
+                <h3>Start Your Spelling Practice Today!</h3>
+                <p>Spelling practice has never been so fun. Choose from a variety of levels and watch your spelling skills improve.</p>
+
+                <h3>Interactive Dictionary</h3>
+                <p>Explore words, their meanings, and listen to their pronunciation.</p>
+            </section>
+        </div>
+    </main>
+
+    <!-- Spelling Practice Page -->
+    <main class="container hidden" id="practicePage">
+        <div class="grid">
+            <section>
+                <hgroup>
+                    <h2>Spelling Practice</h2>
+                    <h3>Type the word and check your spelling!</h3>
+                </hgroup>
+                <div id="flashcard" class="highlight">
+                    <p id="wordToSpell">[Flashcard Word]</p>
+                </div>
+                <input type="text" id="inputWord" placeholder="Type the word here" autocomplete="off" required>
+                <button class="button" onclick="submitWord()">Submit</button>
+                <button class="button" onclick="pronounceWord()">Pronounce</button>
+                <p id="score">Score: 0</p>
+                <div id="review"></div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Dictionary Page -->
+    <main class="container hidden" id="dictionaryPage">
+        <div class="grid">
+            <section>
+                <hgroup>
+                    <h2>Dictionary</h2>
+                    <h3>Find word meanings and hear pronunciation!</h3>
+                </hgroup>
+                <input type="text" id="dictionaryInputWord" placeholder="Enter a word" required>
+                <button class="button" onclick="lookupWord()">Lookup</button>
+                <p id="dictionaryDefinition">[Definition will appear here]</p>
+                <button class="button" onclick="pronounceWord()">Pronounce</button>
+            </section>
+        </div>
+    </main>
+
+    <!-- Subscribe Section -->
+    <section aria-label="Subscribe example">
+        <div class="container">
+            <article>
+                <hgroup>
+                    <h2>Stay Updated</h2>
+                    <h3>Subscribe to receive new words and spelling tips!</h3>
+                </hgroup>
+                <form class="grid">
+                    <input type="text" id="firstname" name="firstname" placeholder="First name" aria-label="First name" required />
+                    <input type="email" id="email" name="email" placeholder="Email" aria-label="Email" required />
+                    <button type="submit" onclick="event.preventDefault()">Subscribe</button>
+                </form>
+            </article>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="container">
+        <small><a href="#">Privacy Policy</a> • <a href="#">Contact Us</a></small>
+    </footer>
+
+    <script>
+        // JavaScript functions to handle word lookup, pronunciation, and spelling practice
+        function submitWord() {
+            const inputWord = document.getElementById('inputWord').value;
+            // Process spelling check and score update
+        }
+
+        function pronounceWord() {
+            const word = document.getElementById('dictionaryInputWord').value || '[Flashcard Word]';
+            // Pronounce word using text-to-speech
+        }
+
+        function lookupWord() {
+            const inputWord = document.getElementById('dictionaryInputWord').value;
+            document.getElementById('dictionaryDefinition').innerText = `Definition of ${inputWord}`;
+            // Fetch and display word definition
+        }
+    </script>
+</body>
+</html>
