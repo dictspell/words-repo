@@ -232,34 +232,35 @@
         }
 
         function submitWord() {
-            const inputWord = document.getElementById('inputWord').value.toLowerCase().trim();
-            const currentWord = currentSet.words[currentWordIndex].toLowerCase();
-            
-            let resultHtml = '';
-            let correctWordHtml = '';
-            for (let i = 0; i < Math.max(inputWord.length, currentWord.length); i++) {
-                if (inputWord[i] === currentWord[i]) {
-                    resultHtml += `<span style="color: green;">${inputWord[i] || '_'}</span>`;
-                    correctWordHtml += `<span style="color: green;">${currentWord[i] || '_'}</span>`;
-                } else if (inputWord[i] !== currentWord[i] && inputWord[i] !== undefined) {
-                    resultHtml += `<span style="color: red;">${inputWord[i]}</span>`;
-                    correctWordHtml += `<span style="color: blue;">${currentWord[i] || '_'}</span>`;
-                } else {
-                    correctWordHtml += `<span style="color: blue;">${currentWord[i] || '_'}</span>`;
-                }
-            }
-
-            if (inputWord === currentWord) {
-                score++;
-                results.push({ word: correctWordHtml, userWord: resultHtml, correct: true });
-            } else {
-                results.push({ word: correctWordHtml, userWord: resultHtml, correct: false });
-            }
-
-            currentWordIndex++;
-            document.getElementById('inputWord').value = '';
-            showWord();
+    const inputWord = document.getElementById('inputWord').value.toLowerCase().trim();
+    const currentWord = currentSet.words[currentWordIndex].toLowerCase();
+    
+    let resultHtml = '';
+    let correctWordHtml = '';
+    for (let i = 0; i < Math.max(inputWord.length, currentWord.length); i++) {
+        if (inputWord[i] === currentWord[i]) {
+            resultHtml += `<span style="color: green;">${inputWord[i] || '_'}</span>`;
+            correctWordHtml += `<span style="color: green;">${currentWord[i] || '_'}</span>`;
+        } else if (inputWord[i] !== currentWord[i] && inputWord[i] !== undefined) {
+            resultHtml += `<span style="color: red;">${inputWord[i]}</span>`;
+            correctWordHtml += `<span style="color: blue;">${currentWord[i] || '_'}</span>`;
+        } else {
+            correctWordHtml += `<span style="color: blue;">${currentWord[i] || '_'}</span>`;
         }
+    }
+
+    if (inputWord === currentWord) {
+        score++;
+        results.push({ word: correctWordHtml, userWord: resultHtml, correct: true });
+    } else {
+        results.push({ word: correctWordHtml, userWord: resultHtml, correct: false });
+    }
+
+    // Highlight: Move to the next word immediately after submission
+    currentWordIndex++;
+    document.getElementById('inputWord').value = '';
+    showWord();
+}
 
         function pronounceWord() {
             const word = document.getElementById('dictionaryInputWord').value || currentSet.words[currentWordIndex].toLowerCase();
@@ -384,10 +385,12 @@
     flashcard.innerText = currentWord;
     flashcard.classList.add('highlight');
     flashcard.style.display = 'block';
-    // Highlight: Remove these lines to enable input immediately
-    // document.getElementById('inputWord').disabled = true;
-    // document.getElementById('submitBtn').disabled = true;
-    // document.getElementById('pronounceBtn').disabled = true;
+    
+    // Highlight: Enable input and buttons
+    document.getElementById('inputWord').disabled = false;
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('pronounceBtn').disabled = false;
+    
     document.getElementById('definition').innerText = '';
     document.getElementById('imageContainer').innerHTML = '';
 
@@ -405,18 +408,16 @@
 
     fetchPexelsImages(currentWord, 'imageContainer');
 
-    // Highlight: Change the timeout duration to 12 seconds (12000 milliseconds)
+    // Highlight: Set a timeout to move to the next word after 12 seconds
     setTimeout(() => {
-        flashcard.classList.remove('highlight');
-        flashcard.innerText = '';
-        // Highlight: Remove these lines as they are no longer needed
-        // document.getElementById('inputWord').disabled = false;
-        // document.getElementById('submitBtn').disabled = false;
-        // document.getElementById('pronounceBtn').disabled = false;
-        document.getElementById('inputWord').focus();
-    }, 12000); // Highlight: Changed from calculateDisappearanceTime(currentWord) * 1000 to 12000
-}
+        if (currentWordIndex === currentSet.words.indexOf(currentWord)) {
+            currentWordIndex++;
+            showWord();
+        }
+    }, 12000);
 
+    document.getElementById('inputWord').focus();
+}
         function pronounceDefinition(definition) {
             const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${gapiKey}`;
 
