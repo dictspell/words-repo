@@ -256,7 +256,6 @@
         results.push({ word: correctWordHtml, userWord: resultHtml, correct: false });
     }
 
-    // Highlight: Move to the next word immediately after submission
     currentWordIndex++;
     document.getElementById('inputWord').value = '';
     showWord();
@@ -386,7 +385,6 @@
     flashcard.classList.add('highlight');
     flashcard.style.display = 'block';
     
-    // Highlight: Enable input and buttons
     document.getElementById('inputWord').disabled = false;
     document.getElementById('submitBtn').disabled = false;
     document.getElementById('pronounceBtn').disabled = false;
@@ -407,14 +405,6 @@
         });
 
     fetchPexelsImages(currentWord, 'imageContainer');
-
-    // Highlight: Set a timeout to move to the next word after 12 seconds
-    setTimeout(() => {
-        if (currentWordIndex === currentSet.words.indexOf(currentWord)) {
-            currentWordIndex++;
-            showWord();
-        }
-    }, 12000);
 
     document.getElementById('inputWord').focus();
 }
