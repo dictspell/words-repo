@@ -15,21 +15,21 @@ const words = [
     { day: '2024-01-14', words: ["We had", "a dance", "party"] },
     { day: '2024-01-15', words: ["She loves", "books about", "animals"] },
     { day: '2024-01-16', words: ["He built", "a snowman", "with a", "carrot nose"] },
-    { day: '2024-01-17', words: ["We went", "to the", "park", "and played"] },
-    { day: '2024-01-18', words: ["She was", "excited to", "help her", "teacher"] },
+    { day: '2024-01-17', words: ["We went", "to the park", "and played"] },
+    { day: '2024-01-18', words: ["She was excited" "to help her", "teacher"] },
     { day: '2024-01-19', words: ["He gave", "his friend", "a high five"] },
     { day: '2024-01-20', words: ["We painted", "pictures of", "flowers"] },
     { day: '2024-01-21', words: ["She felt", "happy when", "her drawing", "was on", "the wall"] },
-    { day: '2024-01-22', words: ["He was", "proud to", "show mom", "his art"] },
+    { day: '2024-01-22', words: ["He was proud to", "show mom", "his art"] },
     { day: '2024-01-23', words: ["We had", "a snack", "and talked"] },
-    { day: '2024-01-24', words: ["She likes", "to sing", "songs with", "friends"] },
+    { day: '2024-01-24', words: ["She likes to sing", "songs with", "friends"] },
     { day: '2024-01-25', words: ["He was", "excited", "to play", "outside"] },
     { day: '2024-01-26', words: ["We built", "a fort", "with blankets"] },
-    { day: '2024-01-27', words: ["She felt", "brave when", "she tried", "something new"] },
+    { day: '2024-01-27', words: ["She felt brave", "when she tried", "something new"] },
     { day: '2024-01-28', words: ["He shared", "his toys", "with friends"] },
     { day: '2024-01-29', words: ["We made", "a puzzle", "together"] },
-    { day: '2024-01-30', words: ["She was", "excited to", "learn about", "seasons"] },
-    { day: '2024-01-31', words: ["He was", "happy to", "see his", "teacher"] }
+    { day: '2024-01-30', words: ["She was excited to", "learn about", "seasons"] },
+    { day: '2024-01-31', words: ["He was happy", "to see", "his teacher"] }
 ];
 
 /*
