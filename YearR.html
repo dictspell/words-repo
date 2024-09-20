@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spelling Flashcards v1.1</title>
+    <title>Spelling Flashcards v1.2</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
     <style>
         body {
@@ -231,35 +231,40 @@
             return Math.max(5, Math.min(10, Math.floor(length / 2)));
         }
 
-        function submitWord() {
-            const inputWord = document.getElementById('inputWord').value.toLowerCase().trim();
-            const currentWord = currentSet.words[currentWordIndex].toLowerCase();
-            
-            let resultHtml = '';
-            let correctWordHtml = '';
-            for (let i = 0; i < Math.max(inputWord.length, currentWord.length); i++) {
-                if (inputWord[i] === currentWord[i]) {
-                    resultHtml += `<span style="color: green;">${inputWord[i] || '_'}</span>`;
-                    correctWordHtml += `<span style="color: green;">${currentWord[i] || '_'}</span>`;
-                } else if (inputWord[i] !== currentWord[i] && inputWord[i] !== undefined) {
-                    resultHtml += `<span style="color: red;">${inputWord[i]}</span>`;
-                    correctWordHtml += `<span style="color: blue;">${currentWord[i] || '_'}</span>`;
-                } else {
-                    correctWordHtml += `<span style="color: blue;">${currentWord[i] || '_'}</span>`;
-                }
-            }
-
-            if (inputWord === currentWord) {
-                score++;
-                results.push({ word: correctWordHtml, userWord: resultHtml, correct: true });
-            } else {
-                results.push({ word: correctWordHtml, userWord: resultHtml, correct: false });
-            }
-
-            currentWordIndex++;
-            document.getElementById('inputWord').value = '';
-            showWord();
+       function submitWord() {
+    const inputWord = document.getElementById('inputWord').value.toLowerCase().trim();
+    const currentWord = currentSet.words[currentWordIndex].toLowerCase();
+    
+    let resultHtml = '';
+    let correctWordHtml = '';
+    for (let i = 0; i < Math.max(inputWord.length, currentWord.length); i++) {
+        if (inputWord[i] === currentWord[i]) {
+            resultHtml += `<span style="color: green;">${inputWord[i] || '_'}</span>`;
+            correctWordHtml += `<span style="color: green;">${currentWord[i] || '_'}</span>`;
+        } else if (inputWord[i] !== currentWord[i] && inputWord[i] !== undefined) {
+            resultHtml += `<span style="color: red;">${inputWord[i]}</span>`;
+            correctWordHtml += `<span style="color: blue;">${currentWord[i] || '_'}</span>`;
+        } else {
+            correctWordHtml += `<span style="color: blue;">${currentWord[i] || '_'}</span>`;
         }
+    }
+
+    if (inputWord === currentWord) {
+        score++;
+        results.push({ word: correctWordHtml, userWord: resultHtml, correct: true });
+    } else {
+        results.push({ word: correctWordHtml, userWord: resultHtml, correct: false });
+    }
+
+    // Clear the existing timer
+    if (wordTimerId) {
+        cancelAnimationFrame(wordTimerId);
+    }
+
+    currentWordIndex++;
+    document.getElementById('inputWord').value = '';
+    showWord();
+}
 
         function pronounceWord() {
             const word = document.getElementById('dictionaryInputWord').value || currentSet.words[currentWordIndex].toLowerCase();
@@ -369,75 +374,68 @@
             });
         }
 
-        function showWord() {
-            if (currentWordIndex >= currentSet.words.length) {
-                document.getElementById('score').innerText = `Final Score: ${score}/${currentSet.words.length}`;
-                displayReview();
-                completedDays[currentSet.day] = score === currentSet.words.length;
-                localStorage.setItem('completedDays', JSON.stringify(completedDays));
-                updateCalendar();
-                return;
-            }
+        let wordStartTime;
+let wordTimerId;
 
-            const currentWord = currentSet.words[currentWordIndex];
-            const flashcard = document.getElementById('flashcard');
-            flashcard.innerText = currentWord;
-            flashcard.classList.add('highlight');
-            flashcard.style.display = 'block';
-            document.getElementById('inputWord').disabled = true;
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('pronounceBtn').disabled = true;
-            document.getElementById('definition').innerText = '';
-            document.getElementById('imageContainer').innerHTML = '';
+function showWord() {
+    if (currentWordIndex >= currentSet.words.length) {
+        document.getElementById('score').innerText = `Final Score: ${score}/${currentSet.words.length}`;
+        displayReview();
+        completedDays[currentSet.day] = score === currentSet.words.length;
+        localStorage.setItem('completedDays', JSON.stringify(completedDays));
+        updateCalendar();
+        return;
+    }
 
-            fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${currentWord}`)
-                .then(response => response.json())
-                .then(data => {
-                    const definition = data[0]?.meanings[0]?.definitions[0]?.definition || 'Definition not found.';
-                    document.getElementById('definition').innerText = definition;
-                    pronunciationUrl = data[0]?.phonetics[0]?.audio || '';
-		            pronounceWord();
-                })
-                .catch(() => {
-                    document.getElementById('definition').innerText = 'Definition not found.';
-                });
+    const currentWord = currentSet.words[currentWordIndex];
+    const flashcard = document.getElementById('flashcard');
+    flashcard.innerText = currentWord;
+    flashcard.classList.add('highlight');
+    flashcard.style.display = 'block';
+    
+    document.getElementById('inputWord').disabled = false;
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('pronounceBtn').disabled = false;
+    
+    document.getElementById('definition').innerText = '';
+    document.getElementById('imageContainer').innerHTML = '';
 
-            fetchPexelsImages(currentWord, 'imageContainer');
+    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${currentWord}`)
+        .then(response => response.json())
+        .then(data => {
+            const definition = data[0]?.meanings[0]?.definitions[0]?.definition || 'Definition not found.';
+            document.getElementById('definition').innerText = definition;
+            pronunciationUrl = data[0]?.phonetics[0]?.audio || '';
+            pronounceWord();
+        })
+        .catch(() => {
+            document.getElementById('definition').innerText = 'Definition not found.';
+        });
 
-            setTimeout(() => {
-                flashcard.classList.remove('highlight');
-                flashcard.innerText = '';
-                document.getElementById('inputWord').disabled = false;
-                document.getElementById('submitBtn').disabled = false;
-                document.getElementById('pronounceBtn').disabled = false;
-                document.getElementById('inputWord').focus();
-            }, calculateDisappearanceTime(currentWord) * 1000);
+    fetchPexelsImages(currentWord, 'imageContainer');
+
+    document.getElementById('inputWord').focus();
+
+    // Cancel any existing timer
+    if (wordTimerId) {
+        cancelAnimationFrame(wordTimerId);
+    }
+
+    // Set the start time for the current word
+    wordStartTime = Date.now();
+
+    // Start the timer for hiding the word
+    function checkWordTime() {
+        const elapsedTime = Date.now() - wordStartTime;
+        if (elapsedTime >= 20000) {
+            flashcard.style.display = 'none';
+        } else {
+            wordTimerId = requestAnimationFrame(checkWordTime);
         }
+    }
 
-        function pronounceDefinition(definition) {
-            const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${gapiKey}`;
-
-            const request = {
-                input: { text: definition },
-                voice: { languageCode: 'en-GB', name: 'en-GB-Studio-C' },
-                audioConfig: { audioEncoding: 'MP3' }
-            };
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(request)
-            })
-            .then(response => response.json())
-            .then(data => {
-                const audioContent = data.audioContent;
-                const audio = new Audio('data:audio/mp3;base64,' + audioContent);
-                audio.play();
-            })
-            .catch(error => console.error('Error:', error));
-        }
+    wordTimerId = requestAnimationFrame(checkWordTime);
+}
 
         function clearLocalStorage() {
             localStorage.removeItem('completedDays');
