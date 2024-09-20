@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spelling Flashcards v1.3</title>
+    <title>Spelling Flashcards v1.4</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
     <style>
         body {
@@ -407,31 +407,12 @@
     fetchPexelsImages(currentWord, 'imageContainer');
 
     document.getElementById('inputWord').focus();
+
+    // Hide the word after 12 seconds
+    setTimeout(() => {
+        flashcard.style.display = 'none';
+    }, 12000);
 }
-        function pronounceDefinition(definition) {
-            const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${gapiKey}`;
-
-            const request = {
-                input: { text: definition },
-                voice: { languageCode: 'en-GB', name: 'en-GB-Studio-C' },
-                audioConfig: { audioEncoding: 'MP3' }
-            };
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(request)
-            })
-            .then(response => response.json())
-            .then(data => {
-                const audioContent = data.audioContent;
-                const audio = new Audio('data:audio/mp3;base64,' + audioContent);
-                audio.play();
-            })
-            .catch(error => console.error('Error:', error));
-        }
 
         function clearLocalStorage() {
             localStorage.removeItem('completedDays');
