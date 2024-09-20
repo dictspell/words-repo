@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spelling Flashcards v1.1</title>
+    <title>Spelling Flashcards v1.2</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
     <style>
         body {
@@ -231,7 +231,7 @@
             return Math.max(5, Math.min(10, Math.floor(length / 2)));
         }
 
-        function submitWord() {
+       function submitWord() {
     const inputWord = document.getElementById('inputWord').value.toLowerCase().trim();
     const currentWord = currentSet.words[currentWordIndex].toLowerCase();
     
@@ -254,6 +254,11 @@
         results.push({ word: correctWordHtml, userWord: resultHtml, correct: true });
     } else {
         results.push({ word: correctWordHtml, userWord: resultHtml, correct: false });
+    }
+
+    // Clear the existing timer
+    if (wordTimerId) {
+        cancelAnimationFrame(wordTimerId);
     }
 
     currentWordIndex++;
@@ -369,7 +374,10 @@
             });
         }
 
-        function showWord() {
+        let wordStartTime;
+let wordTimerId;
+
+function showWord() {
     if (currentWordIndex >= currentSet.words.length) {
         document.getElementById('score').innerText = `Final Score: ${score}/${currentSet.words.length}`;
         displayReview();
@@ -408,10 +416,25 @@
 
     document.getElementById('inputWord').focus();
 
-    // Hide the word after 12 seconds
-    setTimeout(() => {
-        flashcard.style.display = 'none';
-    }, 20000);
+    // Cancel any existing timer
+    if (wordTimerId) {
+        cancelAnimationFrame(wordTimerId);
+    }
+
+    // Set the start time for the current word
+    wordStartTime = Date.now();
+
+    // Start the timer for hiding the word
+    function checkWordTime() {
+        const elapsedTime = Date.now() - wordStartTime;
+        if (elapsedTime >= 20000) {
+            flashcard.style.display = 'none';
+        } else {
+            wordTimerId = requestAnimationFrame(checkWordTime);
+        }
+    }
+
+    wordTimerId = requestAnimationFrame(checkWordTime);
 }
 
         function clearLocalStorage() {
