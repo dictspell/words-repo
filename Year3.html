@@ -370,49 +370,52 @@
         }
 
         function showWord() {
-            if (currentWordIndex >= currentSet.words.length) {
-                document.getElementById('score').innerText = `Final Score: ${score}/${currentSet.words.length}`;
-                displayReview();
-                completedDays[currentSet.day] = score === currentSet.words.length;
-                localStorage.setItem('completedDays', JSON.stringify(completedDays));
-                updateCalendar();
-                return;
-            }
+    if (currentWordIndex >= currentSet.words.length) {
+        document.getElementById('score').innerText = `Final Score: ${score}/${currentSet.words.length}`;
+        displayReview();
+        completedDays[currentSet.day] = score === currentSet.words.length;
+        localStorage.setItem('completedDays', JSON.stringify(completedDays));
+        updateCalendar();
+        return;
+    }
 
-            const currentWord = currentSet.words[currentWordIndex];
-            const flashcard = document.getElementById('flashcard');
-            flashcard.innerText = currentWord;
-            flashcard.classList.add('highlight');
-            flashcard.style.display = 'block';
-            document.getElementById('inputWord').disabled = true;
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('pronounceBtn').disabled = true;
-            document.getElementById('definition').innerText = '';
-            document.getElementById('imageContainer').innerHTML = '';
+    const currentWord = currentSet.words[currentWordIndex];
+    const flashcard = document.getElementById('flashcard');
+    flashcard.innerText = currentWord;
+    flashcard.classList.add('highlight');
+    flashcard.style.display = 'block';
+    // Highlight: Remove these lines to enable input immediately
+    // document.getElementById('inputWord').disabled = true;
+    // document.getElementById('submitBtn').disabled = true;
+    // document.getElementById('pronounceBtn').disabled = true;
+    document.getElementById('definition').innerText = '';
+    document.getElementById('imageContainer').innerHTML = '';
 
-            fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${currentWord}`)
-                .then(response => response.json())
-                .then(data => {
-                    const definition = data[0]?.meanings[0]?.definitions[0]?.definition || 'Definition not found.';
-                    document.getElementById('definition').innerText = definition;
-                    pronunciationUrl = data[0]?.phonetics[0]?.audio || '';
-		            pronounceWord();
-                })
-                .catch(() => {
-                    document.getElementById('definition').innerText = 'Definition not found.';
-                });
+    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${currentWord}`)
+        .then(response => response.json())
+        .then(data => {
+            const definition = data[0]?.meanings[0]?.definitions[0]?.definition || 'Definition not found.';
+            document.getElementById('definition').innerText = definition;
+            pronunciationUrl = data[0]?.phonetics[0]?.audio || '';
+            pronounceWord();
+        })
+        .catch(() => {
+            document.getElementById('definition').innerText = 'Definition not found.';
+        });
 
-            fetchPexelsImages(currentWord, 'imageContainer');
+    fetchPexelsImages(currentWord, 'imageContainer');
 
-            setTimeout(() => {
-                flashcard.classList.remove('highlight');
-                flashcard.innerText = '';
-                document.getElementById('inputWord').disabled = false;
-                document.getElementById('submitBtn').disabled = false;
-                document.getElementById('pronounceBtn').disabled = false;
-                document.getElementById('inputWord').focus();
-            }, calculateDisappearanceTime(currentWord) * 1000);
-        }
+    // Highlight: Change the timeout duration to 12 seconds (12000 milliseconds)
+    setTimeout(() => {
+        flashcard.classList.remove('highlight');
+        flashcard.innerText = '';
+        // Highlight: Remove these lines as they are no longer needed
+        // document.getElementById('inputWord').disabled = false;
+        // document.getElementById('submitBtn').disabled = false;
+        // document.getElementById('pronounceBtn').disabled = false;
+        document.getElementById('inputWord').focus();
+    }, 12000); // Highlight: Changed from calculateDisappearanceTime(currentWord) * 1000 to 12000
+}
 
         function pronounceDefinition(definition) {
             const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${gapiKey}`;
