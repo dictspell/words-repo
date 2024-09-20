@@ -1,4 +1,39 @@
 const words = [
+    { day: '2024-12-01', words: ["make a decision", "after reviewing all the options", "I need to make a decision", "about which job offer to accept", "after reviewing all the options I need to make a decision about which job offer to accept"] },
+    { day: '2024-12-02', words: ["take a break", "you've been working for hours straight", "it's time to take a break", "and relax for a bit", "you've been working for hours straight it's time to take a break and relax for a bit"] },
+    { day: '2024-12-03', words: ["give advice", "on how to improve her presentation skills", "she asked me to give advice", "she asked me to give advice on how to improve her presentation skills"] },
+    { day: '2024-12-04', words: ["make a difference", "volunteering at the local shelter", "can truly make a difference", "in the lives of those in need", "volunteering at the local shelter can truly make a difference in the lives of those in need"] },
+    { day: '2024-12-05', words: ["take a risk", "sometimes entrepreneurs need to take a risk", "to innovate and stay ahead", "of the competition", "sometimes entrepreneurs need to take a risk to innovate and stay ahead of the competition"] },
+    { day: '2024-12-06', words: ["have a meeting", "let's have a meeting tomorrow morning", "to discuss the details", "of the upcoming project", "let's have a meeting tomorrow morning to discuss the details of the upcoming project"] },
+    { day: '2024-12-07', words: ["pay attention", "please pay attention to the instructions", "so that you can complete the task correctly", "please pay attention to the instructions so that you can complete the task correctly"] },
+    { day: '2024-12-08', words: ["save money", "by cooking at home instead of eating out", "you can save money over time", "by cooking at home instead of eating out you can save money over time"] },
+    { day: '2024-12-09', words: ["do homework", "parents often encourage their children", "to do homework", "before watching TV or playing games", "parents often encourage their children to do homework before watching TV or playing games"] },
+    { day: '2024-12-10', words: ["make a mistake", "it's normal to make a mistake when you're learning", "the key is to learn from it", "it's normal to make a mistake when you're learning something new the key is to learn from it"] },
+    { day: '2024-12-11', words: ["take a chance", "sometimes you have to take a chance", "and step out of your comfort zone", "to achieve your goals", "sometimes you have to take a chance and step out of your comfort zone to achieve your goals"] },
+    { day: '2024-12-12', words: ["give permission", "you must get your manager to give permission", "before you can leave work early", "you must get your manager to give permission before you can leave work early"] },
+    { day: '2024-12-13', words: ["make an effort", "to improve your skills", "you need to make an effort", "and practice regularly", "to improve your skills you need to make an effort and practice regularly"] },
+    { day: '2024-12-14', words: ["take notes", "during the lecture", "be sure to take notes", "so you can review the material later", "during the lecture be sure to take notes so you can review the material later"] },
+    { day: '2024-12-15', words: ["have a conversation", "it's important to have a conversation with your team", "about the changes in the project plan", "it's important to have a conversation with your team about the changes in the project plan"] },
+    { day: '2024-12-16', words: ["pay a visit", "we decided to pay a visit to our grandparents", "over the weekend", "we decided to pay a visit to our grandparents over the weekend"] },
+    { day: '2024-12-17', words: ["save time", "using a planner can help you organise your schedule", "and save time during the week", "using a planner can help you organise your schedule and save time during the week"] },
+    { day: '2024-12-18', words: ["do business", "we prefer to do business with companies", "that prioritise sustainability and ethical practices", "we prefer to do business with companies that prioritise sustainability and ethical practices"] },
+    { day: '2024-12-19', words: ["make a choice", "you need to make a choice between going to the beach", "or staying home to relax", "you need to make a choice between going to the beach or staying home to relax"] },
+    { day: '2024-12-20', words: ["take responsibility", "it's crucial to take responsibility for your actions", "and address any mistakes you make", "it's crucial to take responsibility for your actions and address any mistakes you make"] },
+    { day: '2024-12-21', words: ["strong coffee", "I need a cup of strong coffee", "to wake up in the morning", "I need a cup of strong coffee to wake up in the morning"] },
+    { day: '2024-12-22', words: ["heavy rain", "the heavy rain caused flooding", "in several areas of the city", "the heavy rain caused flooding in several areas of the city"] },
+    { day: '2024-12-23', words: ["deep sleep", "after a long day he fell into a deep sleep", "and didn't wake up until morning", "after a long day he fell into a deep sleep and didn't wake up until morning"] },
+    { day: '2024-12-24', words: ["high hopes", "she has high hopes", "of getting into her dream university", "she has high hopes of getting into her dream university"] },
+    { day: '2024-12-25', words: ["fast food", "fast food is convenient", "but it's not the healthiest option", "for everyday meals", "fast food is convenient but it's not the healthiest option for everyday meals"] },
+    { day: '2024-12-26', words: ["bright idea", "he had a bright idea", "to improve the efficiency of the production process", "he had a bright idea to improve the efficiency of the production process"] },
+    { day: '2024-12-27', words: ["strong argument", "her strong argument convinced everyone", "to support the new policy", "her strong argument convinced everyone to support the new policy"] },
+    { day: '2024-12-28', words: ["light sleeper", "as a light sleeper she wakes up", "at the slightest noise", "as a light sleeper she wakes up at the slightest noise"] },
+    { day: '2024-12-29', words: ["high speed", "the car was travelling at such high speed", "that it was difficult to control", "the car was travelling at such high speed that it was difficult to control"] },
+    { day: '2024-12-30', words: ["hard work", "achieving success requires a lot of hard work", "and dedication", "achieving success requires a lot of hard work and dedication"] },
+    { day: '2024-12-31', words: ["big decision", "moving to a new country is a big decision", "that requires careful consideration", "moving to a new country is a big decision that requires careful consideration"] }
+];
+
+/* on 20 Sept
+const words = [
     { day: '2024-12-01', words: ["We decorated", "the Christmas tree", "together with ornaments", "and lights", "We decorated the Christmas tree together with ornaments and lights"] },
     { day: '2024-12-02', words: ["She baked", "a gingerbread house", "and decorated it", "with candy and frosting", "She baked a gingerbread house and decorated it with candy and frosting"] },
     { day: '2024-12-03', words: ["He made", "a snow angel", "in the yard", "and laughed when it looked perfect", "He made a snow angel in the yard and laughed when it looked perfect"] },
@@ -32,7 +67,7 @@ const words = [
     { day: '2024-12-31', words: ["We celebrated New Year's Eve", "with fireworks", "and cheered", "as the clock struck midnight", "We celebrated New Year's Eve with fireworks and cheered as the clock struck midnight"] }
 ];
 
-/*  Done=====on 24 Aug
+  Done=====on 24 Aug
 const words = [
     { day: '2024-11-01', words: ["We raked leaves", "into a big pile", "and jumped into it", "We raked leaves into a big pile and jumped into it"] },
     { day: '2024-11-02', words: ["She found", "a rare four-leaf clover", "in the grass", "and kept it for good luck", "She found a rare four-leaf clover in the grass and kept it for good luck"] },
