@@ -16,7 +16,7 @@ const words = [
     { day: '2024-01-15', words: ["She loves", "books about", "animals"] },
     { day: '2024-01-16', words: ["He built", "a snowman", "with a", "carrot nose"] },
     { day: '2024-01-17', words: ["We went", "to the park", "and played"] },
-    { day: '2024-01-18', words: ["She was excited" "to help her", "teacher"] },
+    { day: '2024-01-18', words: ["She was excited", "to help her", "teacher"] },
     { day: '2024-01-19', words: ["He gave", "his friend", "a high five"] },
     { day: '2024-01-20', words: ["We painted", "pictures of", "flowers"] },
     { day: '2024-01-21', words: ["She felt", "happy when", "her drawing", "was on", "the wall"] },
