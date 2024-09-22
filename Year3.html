@@ -427,7 +427,7 @@ function showWord() {
     // Start the timer for hiding the word
     function checkWordTime() {
         const elapsedTime = Date.now() - wordStartTime;
-        if (elapsedTime >= 20000) {
+        if (elapsedTime >= 15000) {
             flashcard.style.display = 'none';
         } else {
             wordTimerId = requestAnimationFrame(checkWordTime);
