@@ -2,29 +2,76 @@
 <html>
 <head>
     <title>網球拍平衡點計算器</title>
+    <script>
+        function calculateBalance() {
+            // Read input values
+            var originalWeight = parseFloat(document.getElementById('originalWeight').value);
+            var originalBalance = parseFloat(document.getElementById('originalBalance').value);
+            var racketLength = parseFloat(document.getElementById('racketLength').value);
+            
+            // Lead tape weights (default to 0 if blank)
+            var leadTape12Weight = parseFloat(document.getElementById('leadTape12Weight').value) || 0;
+            var leadTape39Weight = parseFloat(document.getElementById('leadTape39Weight').value) || 0;
+            var leadTapeThroatWeight = parseFloat(document.getElementById('leadTapeThroatWeight').value) || 0;
+            var leadTapeButtWeight = parseFloat(document.getElementById('leadTapeButtWeight').value) || 0;
+            
+            // Define positions (in mm from the butt cap)
+            // These positions are assumptions – adjust as needed.
+            var leadTape12Position = racketLength;         // 12 o'clock: tip of racket
+            var leadTape39Position = racketLength - 100;     // 3/9 o'clock: 100 mm from tip
+            var leadTapeThroatPosition = racketLength - 200; // Throat: 200 mm from tip
+            var leadTapeButtPosition = 100;                  // Butt cap position at 100 mm from the very end
+            
+            // Total lead weight and new total weight
+            var totalLeadWeight = leadTape12Weight + leadTape39Weight + leadTapeThroatWeight + leadTapeButtWeight;
+            var totalWeight = originalWeight + totalLeadWeight;
+            
+            // Calculate moments (weight * distance from butt cap)
+            var momentOriginal = originalWeight * originalBalance;
+            var moment12 = leadTape12Weight * leadTape12Position;
+            var moment39 = leadTape39Weight * leadTape39Position;
+            var momentThroat = leadTapeThroatWeight * leadTapeThroatPosition;
+            var momentButt = leadTapeButtWeight * leadTapeButtPosition;
+            
+            // Total moment is the sum of all individual moments
+            var totalMoment = momentOriginal + moment12 + moment39 + momentThroat + momentButt;
+            
+            // New balance point (mm from the butt cap)
+            var newBalance = totalMoment / totalWeight;
+            
+            document.getElementById('result').innerHTML = 
+                "新總重量: " + totalWeight.toFixed(2) + " g <br>" +
+                "新平衡點: " + newBalance.toFixed(2) + " mm (從拍柄末端計)";
+        }
+    </script>
 </head>
 <body>
     <h2>網球拍平衡點計算器</h2>
-    <label>原重量 (克): </label>
-    <input type="number" id="originalWeight"><br><br>
-    <label>原平衡點 (厘米): </label>
-    <input type="number" id="originalBalancePoint"><br><br>
-    <label>新平衡點 (厘米): </label>
-    <input type="number" id="newBalancePoint"><br><br>
-    <button onclick="calculate()">計算</button>
+    <label>球拍長度 (mm):</label>
+    <input type="number" id="racketLength" value="685"><br><br>
+    
+    <label>原重量 (g):</label>
+    <input type="number" id="originalWeight" value="305"><br><br>
+    
+    <label>原平衡點 (mm):</label>
+    <input type="number" id="originalBalance" value="320"><br><br>
+    
+    <h3>鉛貼重量輸入 (g):</h3>
+    <label>12 點鐘方向:</label>
+    <input type="number" id="leadTape12Weight" value="0"><br><br>
+    
+    <label>3/9 點鐘方向:</label>
+    <input type="number" id="leadTape39Weight" value="0"><br><br>
+    
+    <label>Throat:</label>
+    <input type="number" id="leadTapeThroatWeight" value="0"><br><br>
+    
+    <label>Butt Cap:</label>
+    <input type="number" id="leadTapeButtWeight" value="0"><br><br>
+    
+    <button onclick="calculateBalance()">計算</button>
+    
+    <h3>結果:</h3>
     <p id="result"></p>
-
-    <script>
-        function calculate() {
-            var originalWeight = parseFloat(document.getElementById('originalWeight').value);
-            var originalBalancePoint = parseFloat(document.getElementById('originalBalancePoint').value);
-            var newBalancePoint = parseFloat(document.getElementById('newBalancePoint').value);
-
-            var additionalWeight = (newBalancePoint * originalWeight - originalBalancePoint * originalWeight) / (originalBalancePoint - newBalancePoint);
-            var additionalPosition = newBalancePoint;
-
-            document.getElementById('result').innerHTML = '需要加嘅重量：' + additionalWeight.toFixed(2) + ' 克，位置：' + additionalPosition.toFixed(2) + ' 厘米';
-        }
-    </script>
 </body>
 </html>
