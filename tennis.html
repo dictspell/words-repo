@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>網球拍平衡點計算器</title>
+</head>
+<body>
+    <h2>網球拍平衡點計算器</h2>
+    <label>原重量 (克): </label>
+    <input type="number" id="originalWeight"><br><br>
+    <label>原平衡點 (厘米): </label>
+    <input type="number" id="originalBalancePoint"><br><br>
+    <label>新平衡點 (厘米): </label>
+    <input type="number" id="newBalancePoint"><br><br>
+    <button onclick="calculate()">計算</button>
+    <p id="result"></p>
+
+    <script>
+        function calculate() {
+            var originalWeight = parseFloat(document.getElementById('originalWeight').value);
+            var originalBalancePoint = parseFloat(document.getElementById('originalBalancePoint').value);
+            var newBalancePoint = parseFloat(document.getElementById('newBalancePoint').value);
+
+            var additionalWeight = (newBalancePoint * originalWeight - originalBalancePoint * originalWeight) / (originalBalancePoint - newBalancePoint);
+            var additionalPosition = newBalancePoint;
+
+            document.getElementById('result').innerHTML = '需要加嘅重量：' + additionalWeight.toFixed(2) + ' 克，位置：' + additionalPosition.toFixed(2) + ' 厘米';
+        }
+    </script>
+</body>
+</html>
