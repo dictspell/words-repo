@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCN-Bridge | Zero-Downtime Oracle Migrations</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0B0E11;
+            --bg-card: #12161C;
+            --bg-elevated: #1A1F27;
+            --border: #2A3040;
+            --text: #E8ECF1;
+            --text-dim: #8892A4;
+            --accent: #F97316;
+            --accent-glow: rgba(249, 115, 22, 0.15);
+            --teal: #2DD4BF;
+            --teal-glow: rgba(45, 212, 191, 0.12);
+            --red: #EF4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ── Header ── */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(11, 14, 17, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+        }
+        .header-inner {
+            max-width: 1140px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text);
+        }
+        .logo span { color: var(--accent); }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text); }
+        .btn-primary {
+            display: inline-block;
+            background: var(--accent);
+            color: #fff;
+            padding: 0.7rem 1.4rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.25s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background: #EA6A10;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(249,115,22,0.25);
+        }
+        .btn-outline {
+            display: inline-block;
+            border: 1.5px solid var(--border);
+            color: var(--text);
+            padding: 0.7rem 1.4rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.25s;
+            background: transparent;
+        }
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ── Hero ── */
+        .hero {
+            padding: 7rem 2rem 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            left: -20%;
+            width: 70%;
+            height: 120%;
+            background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 65%);
+            pointer-events: none;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            right: -15%;
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(ellipse, var(--teal-glow) 0%, transparent 65%);
+            pointer-events: none;
+        }
+        .hero-inner {
+            max-width: 1140px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .hero-badge {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--teal);
+            border: 1px solid rgba(45, 212, 191, 0.3);
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            margin-bottom: 1.5rem;
+            background: var(--teal-glow);
+        }
+        .hero h1 {
+            font-size: clamp(2.5rem, 5.5vw, 4.2rem);
+            font-weight: 700;
+            line-height: 1.08;
+            letter-spacing: -2px;
+            margin-bottom: 1.2rem;
+            max-width: 800px;
+        }
+        .hero h1 em {
+            font-style: normal;
+            color: var(--accent);
+        }
+        .hero-sub {
+            font-size: 1.25rem;
+            color: var(--text-dim);
+            max-width: 640px;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .hero-detail {
+            font-size: 1rem;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+            opacity: 0.8;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .hero-email {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-top: 0.8rem;
+        }
+        .hero-email a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* ── Section ── */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
+        .section-title {
+            font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 0.75rem;
+        }
+        .section-sub {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+
+        /* ── Problem vs Solution ── */
+        .pv-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .pv-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2rem;
+            position: relative;
+        }
+        .pv-card--problem { border-left: 3px solid var(--red); }
+        .pv-card--solution { border-left: 3px solid var(--teal); }
+        .pv-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        .pv-card--problem h3 { color: var(--red); }
+        .pv-card--solution h3 { color: var(--teal); }
+        .pv-card p, .pv-card li {
+            color: var(--text-dim);
+            font-size: 0.98rem;
+            line-height: 1.8;
+        }
+        .pv-card ul {
+            list-style: none;
+            margin-top: 1rem;
+        }
+        .pv-card li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .pv-card li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--teal);
+            font-weight: 700;
+        }
+
+        /* ── Callout box ── */
+        .callout {
+            background: linear-gradient(135deg, var(--accent) 0%, #D95D0E 100%);
+            border-radius: 14px;
+            padding: 2.2rem 2.5rem;
+            color: #fff;
+            margin-bottom: 2rem;
+        }
+        .callout h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .callout p {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            opacity: 0.95;
+        }
+        .callout strong {
+            background: rgba(255,255,255,0.18);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+        }
+        .dba-note {
+            margin-top: 1.2rem;
+            background: rgba(255,255,255,0.12);
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            font-size: 0.95rem;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        /* ── Architecture ── */
+        .arch-diagram {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .arch-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            flex-wrap: wrap;
+        }
+        .arch-node {
+            text-align: center;
+            padding: 1.2rem 1.5rem;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            min-width: 160px;
+        }
+        .arch-node--db {
+            background: rgba(249, 115, 22, 0.1);
+            border: 1.5px solid rgba(249, 115, 22, 0.3);
+            color: var(--accent);
+        }
+        .arch-node--engine {
+            background: rgba(45, 212, 191, 0.08);
+            border: 1.5px solid rgba(45, 212, 191, 0.3);
+            color: var(--teal);
+        }
+        .arch-node--target {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1.5px solid rgba(59, 130, 246, 0.3);
+            color: #60A5FA;
+        }
+        .arch-arrow {
+            font-size: 1.4rem;
+            color: var(--text-dim);
+            padding: 0 0.8rem;
+            opacity: 0.5;
+        }
+        .arch-sub {
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            font-weight: 400;
+            display: block;
+            margin-top: 0.3rem;
+        }
+        .arch-caption {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        /* ── Case Study ── */
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .case-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.8rem;
+        }
+        .case-card h4 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin-bottom: 0.6rem;
+        }
+        .case-card p {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.2rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2rem;
+        }
+        .stat { text-align: center; }
+        .stat-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(1.8rem, 3vw, 2.4rem);
+            font-weight: 700;
+            color: var(--teal);
+        }
+        .stat-label {
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            margin-top: 0.3rem;
+        }
+
+        /* ── Steps ── */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.2rem;
+        }
+        .step {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.8rem;
+            position: relative;
+        }
+        .step-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            opacity: 0.3;
+            margin-bottom: 0.5rem;
+        }
+        .step h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .step p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        /* ── Bug Fixes / Proof ── */
+        .proof-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+        .proof-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.8rem;
+        }
+        .proof-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+        .proof-tag {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .proof-tag--critical {
+            background: rgba(239, 68, 68, 0.12);
+            color: var(--red);
+        }
+        .proof-tag--data {
+            background: rgba(249, 115, 22, 0.12);
+            color: var(--accent);
+        }
+        .proof-tag--perf {
+            background: rgba(45, 212, 191, 0.1);
+            color: var(--teal);
+        }
+        .proof-card p {
+            color: var(--text-dim);
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        /* ── Packages ── */
+        .pkg-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        .pkg {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .pkg--featured {
+            border-color: var(--accent);
+            box-shadow: 0 0 40px var(--accent-glow);
+            position: relative;
+        }
+        .pkg-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.3rem 1rem;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .pkg h4 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        .pkg-price {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        .pkg-price span {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            font-weight: 400;
+        }
+        .pkg ul {
+            list-style: none;
+            flex: 1;
+            margin-bottom: 1.5rem;
+        }
+        .pkg li {
+            padding: 0.4rem 0;
+            padding-left: 1.3rem;
+            position: relative;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+        .pkg li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--teal);
+            font-weight: 700;
+        }
+
+        /* ── About ── */
+        .about-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2.5rem;
+            display: flex;
+            gap: 2.5rem;
+            align-items: flex-start;
+        }
+        .about-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--teal));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .about-text h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        .about-role {
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .about-text p {
+            color: var(--text-dim);
+            font-size: 0.98rem;
+            line-height: 1.8;
+            margin-bottom: 0.8rem;
+        }
+        .about-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+        .about-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+        }
+
+        /* ── CTA ── */
+        .cta-section {
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border);
+            padding: 5rem 2rem;
+        }
+        .cta-inner {
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .cta-inner h2 {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+        .cta-inner p {
+            color: var(--text-dim);
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+        .cta-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2rem;
+            text-align: left;
+            margin-top: 2rem;
+        }
+        .cta-box h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .cta-box p, .cta-box li {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+        .cta-box ul {
+            list-style: none;
+            margin: 0.8rem 0 1.5rem;
+        }
+        .cta-box li {
+            padding: 0.3rem 0;
+            padding-left: 1.3rem;
+            position: relative;
+        }
+        .cta-box li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--teal);
+            font-weight: 700;
+        }
+        .cta-email {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+        .cta-email a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* ── Footer ── */
+        .footer {
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.82rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .pv-grid, .case-grid, .steps-grid, .proof-grid, .pkg-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-row { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+            .about-card { flex-direction: column; align-items: center; text-align: center; }
+            .about-tags { justify-content: center; }
+            .nav-links { display: none; }
+            .arch-flow { flex-direction: column; }
+            .arch-arrow { transform: rotate(90deg); padding: 0.5rem 0; }
+        }
+
+        /* ── Animations ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate {
+            opacity: 0;
+            animation: fadeUp 0.7s ease forwards;
+        }
+        .animate-d1 { animation-delay: 0.1s; }
+        .animate-d2 { animation-delay: 0.2s; }
+        .animate-d3 { animation-delay: 0.3s; }
+        .animate-d4 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+
+<!-- ════ Header ════ -->
+<header class="header">
+    <div class="header-inner">
+        <div class="logo"><span>SCN</span>BRIDGE</div>
+        <nav class="nav-links">
+            <a href="#problem">How It Works</a>
+            <a href="#proof">Track Record</a>
+            <a href="#packages">Packages</a>
+            <a href="#about">About</a>
+            <a href="mailto:scnbridge@gmail.com" class="btn-primary">Get Started</a>
+        </nav>
+    </div>
+</header>
+
+<!-- ════ Hero ════ -->
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-badge animate">Enterprise-Grade Migration · No Enterprise Price Tag</div>
+        <h1 class="animate animate-d1">Zero-Downtime<br><em>Oracle Migrations.</em></h1>
+        <p class="hero-sub animate animate-d2">Move multi-terabyte Oracle databases to the cloud or new infrastructure with under 5 minutes of actual downtime.</p>
+        <p class="hero-detail animate animate-d3">Standard Data Pump exports leave you with hours of missing data that cause massive business downtime. The SCN-Bridge syncs your missing data in real-time, bridging the gap between your export and your go-live.</p>
+        <div class="hero-actions animate animate-d4">
+            <a href="mailto:scnbridge@gmail.com?subject=SCN-Bridge%20Feasibility%20Consultation" class="btn-primary">Request a Free Feasibility Consultation</a>
+            <a href="#how" class="btn-outline">See How It Works</a>
+        </div>
+        <p class="hero-email animate animate-d4">or email directly: <a href="mailto:scnbridge@gmail.com">scnbridge@gmail.com</a></p>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════ Problem vs Solution ════ -->
+<section class="section" id="problem">
+    <div class="section-label">The Problem &amp; The Solution</div>
+    <h2 class="section-title">Why Standard Migrations Fail</h2>
+    <p class="section-sub">You shouldn't have to choose between data integrity and business continuity.</p>
+
+    <!-- Architecture Diagram -->
+    <div class="arch-diagram">
+        <div class="arch-flow">
+            <div class="arch-node arch-node--db">
+                Source Oracle
+                <span class="arch-sub">LogMiner / Redo Logs</span>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-node arch-node--engine">
+                SCN-Bridge
+                <span class="arch-sub">Flink + Debezium CDC</span>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-node arch-node--target">
+                Target Oracle
+                <span class="arch-sub">Fully Synced, Ready for Cutover</span>
+            </div>
+        </div>
+        <p class="arch-caption">Real-time log-based replication — zero impact on production, zero transactions dropped.</p>
+    </div>
+
+    <div class="pv-grid">
+        <div class="pv-card pv-card--problem">
+            <h3>⚠ The Oracle Migration Trap</h3>
+            <p>A 5TB database means 20+ hours offline with standard expdp/impdp. To avoid this, Oracle pushes you toward GoldenGate — which can cost upwards of <strong>$200,000 in licenses</strong> and months of configuration.</p>
+        </div>
+        <div class="pv-card pv-card--solution">
+            <h3>✓ The SCN-Bridge Solution</h3>
+            <p>Powered by a custom implementation of Apache Flink and Debezium, we deliver enterprise-grade real-time replication without the enterprise price tag.</p>
+            <ul>
+                <li><strong>100% Data Integrity</strong> — seeded with your exact FLASHBACK_SCN. Not a single transaction dropped.</li>
+                <li><strong>Zero Impact on Production</strong> — reads directly from Redo/Archive logs. No trigger-based performance hits.</li>
+                <li><strong>Delivered in Days, Not Months</strong> — deploy, catch up, and cutover.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="callout">
+        <h3>TL;DR — When to Use Each Approach:</h3>
+        <p>If you need <strong>permanent, bi-directional multi-master replication for 5 years</strong>, buy GoldenGate. If you want to <strong>migrate 5TB this weekend with zero downtime and save $150k+ in licensing</strong>, use the SCN-Bridge.</p>
+        <div class="dba-note">
+            <strong>For DBAs Who Know:</strong> You know GoldenGate is the most powerful replication tool on the market, but it's often overkill for a one-time migration.
+        </div>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════ Case Study ════ -->
+<section class="section">
+    <div class="section-label">Proven in Production</div>
+    <h2 class="section-title">Real Results, Real Migration</h2>
+    <p class="section-sub">A mission-critical enterprise Oracle migration — completed in hours, not weekends.</p>
+
+    <div class="case-grid">
+        <div class="case-card">
+            <h4>The Challenge</h4>
+            <p>A large enterprise needed to migrate a 4TB Oracle 12c production database to 19c. Business requirements dictated a maximum offline window of 15 minutes. A standard migration estimated 20+ hours of downtime.</p>
+        </div>
+        <div class="case-card">
+            <h4>The Process</h4>
+            <p>While the 4TB import ran on the target server, the SCN-Bridge connected to the source. Starting from the exact SCN of the snapshot, it processed over 1.2 million intermediate transactions in the background.</p>
+        </div>
+        <div class="case-card">
+            <h4>The Execution</h4>
+            <p>The SCN-Bridge achieved &lt;1-second lag within 4 hours. The final application switch and cutover took 4 minutes and 12 seconds.</p>
+        </div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat">
+            <div class="stat-num">4:12</div>
+            <div class="stat-label">Actual Cutover Time</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num">0</div>
+            <div class="stat-label">Data Loss</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num">0</div>
+            <div class="stat-label">Weekend Overtime</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num">1.2M</div>
+            <div class="stat-label">Transactions Synced</div>
+        </div>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════ How It Works ════ -->
+<section class="section" id="how">
+    <div class="section-label">Process</div>
+    <h2 class="section-title">How It Works: The 1-Day Delivery</h2>
+    <p class="section-sub">Minimal disruption. Maximum confidence.</p>
+
+    <div class="steps-grid">
+        <div class="step">
+            <div class="step-num">01</div>
+            <h4>Pre-Flight Check</h4>
+            <p>We analyze your log retention and supplemental logging remotely. No installations required.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">02</div>
+            <h4>The Snapshot</h4>
+            <p>Your team takes a standard Data Pump export at a specific SCN. The application stays online.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">03</div>
+            <h4>The Catch-Up</h4>
+            <p>We deploy the SCN-Bridge. It reads everything that changed since the snapshot and applies it to the new database.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">04</div>
+            <h4>The Cutover</h4>
+            <p>Once 100% in sync, you pause the application, switch the connection string, and go live. Typically under 5 minutes.</p>
+        </div>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════ Track Record / Bugs Fixed ════ -->
+<section class="section" id="proof">
+    <div class="section-label">Engineering Depth</div>
+    <h2 class="section-title">Battle-Tested in Production</h2>
+    <p class="section-sub">Real bugs we've found and fixed in CDC pipelines — the kind of issues that silently corrupt your data.</p>
+
+    <div class="proof-grid">
+        <div class="proof-card">
+            <div class="proof-tag proof-tag--critical">CRITICAL</div>
+            <h4>Silent Sync Hang</h4>
+            <p>SQL cache keyed only by table name. When Debezium omitted NULL columns, the cached SQL had wrong placeholders — silently swallowed errors. No logs. No warnings. Just a hung job.</p>
+        </div>
+        <div class="proof-card">
+            <div class="proof-tag proof-tag--data">DATA INTEGRITY</div>
+            <h4>Lost Decimal Scale</h4>
+            <p>Debezium encodes NUMBER(10,2) as base64 without scale metadata. A value of 5000.00 was decoded as 500000 — violating CHECK constraints and silently corrupting financial data.</p>
+        </div>
+        <div class="proof-card">
+            <div class="proof-tag proof-tag--data">DATA INTEGRITY</div>
+            <h4>Case-Sensitive Column Sort</h4>
+            <p>SQL builders sorted UPPERCASED names, but parameter binding sorted original-case JSON keys. Java's case-sensitive sort caused wrong values in wrong columns — silent data corruption.</p>
+        </div>
+        <div class="proof-card">
+            <div class="proof-tag proof-tag--perf">RELIABILITY</div>
+            <h4>Cross-Table Batch Contamination</h4>
+            <p>All tables shared one JDBC connection and transaction. One bad row in CUSTOMERS rolled back valid ADDRESSES rows. Multiple tables appeared hung together.</p>
+        </div>
+        <div class="proof-card">
+            <div class="proof-tag proof-tag--critical">MEMORY LEAK</div>
+            <h4>Infinite FK Retry Loop</h4>
+            <p>FK retry queue created new entries with retryCount=0 on each failure. The original count was discarded. Max retries were never reached — eventual OutOfMemoryError.</p>
+        </div>
+        <div class="proof-card">
+            <div class="proof-tag proof-tag--perf">MONITORING</div>
+            <h4>Diagnostic Toolkit Included</h4>
+            <p>Every deployment includes our production diagnostic script that captures Flink job status, CDC source progress, sink metrics, and full stack traces in one command.</p>
+        </div>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════ Packages ════ -->
+<section class="section" id="packages">
+    <div class="section-label">Packages</div>
+    <h2 class="section-title">Transparent Pricing</h2>
+    <p class="section-sub">Choose the engagement that fits your migration needs.</p>
+
+    <div class="pkg-grid">
+        <div class="pkg">
+            <h4>CDC Health Check</h4>
+            <div class="pkg-price">Free <span>/ lead gen</span></div>
+            <ul>
+                <li>Run our diagnostic script on your logs</li>
+                <li>30-minute call to explain findings</li>
+                <li>Written report with recommendations</li>
+                <li>No commitment required</li>
+            </ul>
+            <a href="mailto:scnbridge@gmail.com?subject=CDC%20Health%20Check" class="btn-outline" style="text-align:center;">Request Health Check</a>
+        </div>
+        <div class="pkg pkg--featured">
+            <div class="pkg-badge">Most Popular</div>
+            <h4>Full Migration</h4>
+            <div class="pkg-price">From $5,000</div>
+            <ul>
+                <li>Complete SCN-Bridge deployment</li>
+                <li>Source & target Oracle configuration</li>
+                <li>LogMiner + supplemental logging setup</li>
+                <li>Testing, validation & cutover support</li>
+                <li>Full knowledge transfer document</li>
+                <li>30-day post-migration support</li>
+            </ul>
+            <a href="mailto:scnbridge@gmail.com?subject=Full%20Migration%20Inquiry" class="btn-primary" style="text-align:center;">Get a Quote</a>
+        </div>
+        <div class="pkg">
+            <h4>Managed CDC + Support</h4>
+            <div class="pkg-price">From $2,000 <span>/mo</span></div>
+            <ul>
+                <li>Everything in Full Migration</li>
+                <li>Ongoing monitoring & alerting</li>
+                <li>Bug fixes & troubleshooting</li>
+                <li>Monthly retainer</li>
+                <li>Priority response SLA</li>
+            </ul>
+            <a href="mailto:scnbridge@gmail.com?subject=Managed%20CDC%20Inquiry" class="btn-outline" style="text-align:center;">Let's Talk</a>
+        </div>
+    </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════ About ════ -->
+<section class="section" id="about">
+    <div class="section-label">About</div>
+    <h2 class="section-title">Who's Behind SCN-Bridge</h2>
+
+    <div class="about-card">
+        <div class="about-avatar">DB</div>
+        <div class="about-text">
+            <h3>Oracle DBA & Data Engineer</h3>
+            <div class="about-role">SCN-Bridge Creator & Lead Engineer</div>
+            <p>I'm a senior Oracle DBA with deep expertise in database internals — LogMiner, supplemental logging, SCN mechanics, and Data Guard. I also build the Java/Flink pipelines that make zero-downtime migration possible.</p>
+            <p>That combination — understanding both the Oracle side and the streaming data engineering side — is what makes the SCN-Bridge reliable where other CDC solutions silently fail. Every bug fix in this tool came from a real production issue I diagnosed and resolved.</p>
+            <p>I built SCN-Bridge because I was tired of watching teams spend $200K on GoldenGate licenses for a one-time migration, or lose a weekend to Data Pump downtime. There's a better way.</p>
+            <div class="about-tags">
+                <span class="about-tag">Oracle 12c / 19c / 21c</span>
+                <span class="about-tag">Apache Flink</span>
+                <span class="about-tag">Debezium CDC</span>
+                <span class="about-tag">LogMiner</span>
+                <span class="about-tag">Data Guard</span>
+                <span class="about-tag">Java / JDBC</span>
+                <span class="about-tag">Production Operations</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════ CTA ════ -->
+<section class="cta-section">
+    <div class="cta-inner">
+        <h2>Is Your Database Ready for a Zero-Downtime Move?</h2>
+        <p>Not every Oracle database is configured to allow log-based CDC. Before we even discuss a project, I want to ensure your system is compatible.</p>
+
+        <a href="mailto:scnbridge@gmail.com?subject=Pre-Flight%20Script%20Request" class="btn-primary">Email Me for the Free Pre-Flight Script</a>
+
+        <div class="cta-box">
+            <h3>What the Pre-Flight Script Checks:</h3>
+            <ul>
+                <li>Archive Log retention — is it long enough to bridge the migration gap?</li>
+                <li>Supplemental Logging — is it correctly configured?</li>
+                <li>Log switch frequency — to estimate Flink memory requirements</li>
+            </ul>
+            <p>Run it on your source database. It's lightweight, read-only, and takes under 60 seconds.</p>
+        </div>
+
+        <p class="cta-email">
+            Contact: <a href="mailto:scnbridge@gmail.com">scnbridge@gmail.com</a><br>
+            <span style="opacity: 0.7; font-size: 0.85rem;">No commitment. No sales pitch. Just a technical validation.</span>
+        </p>
+    </div>
+</section>
+
+<!-- ════ Footer ════ -->
+<footer class="footer">
+    <p>&copy; 2025 SCN-Bridge Oracle Migration Services. All rights reserved.</p>
+    <p style="margin-top: 0.3rem; opacity: 0.6;">Enterprise-Grade Migration Without the Enterprise Price Tag</p>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const els = document.querySelectorAll('.step, .case-card, .proof-card, .pkg, .pv-card, .stat, .about-card');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+    els.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+    });
+});
+</script>
+
+</body>
+</html>
