@@ -21,7 +21,7 @@ st.info(f"🕒 **Last Updated:** {current_time} (UK Time)")
 M3_ROUTE_CAMS = {
     "M3 J4 (Camberley)": "URL_HERE",
     "M3 J3 (Lightwater)": "URL_HERE",
-    "M3 J2 (M25 Interchange)": "https://www.motorwaycameras.co.uk/imagehandlerx/?3567306407936",
+    "M3 J2 (M25 Interchange)": "https://roadca.ms/2687",
     "M3 J1 (Sunbury)": "URL_HERE"
 }
 
