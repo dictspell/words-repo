@@ -1,9 +1,11 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import requests
 from PIL import Image
 from io import BytesIO
 from datetime import datetime
 import pytz
+import time
 
 st.set_page_config(page_title="Traffic Intelligence Monitor", page_icon="🧿", layout="wide")
 
@@ -16,71 +18,94 @@ uk_timezone = pytz.timezone('Europe/London')
 current_time = datetime.now(uk_timezone).strftime("%H:%M:%S")
 st.info(f"🕒 **Last Updated:** {current_time} (UK Time)")
 
-# --- CAMERA URL DICTIONARIES ---
-# YOU MUST REPLACE THE "URL_HERE" TEXT WITH REAL LINKS COPIED FROM A TRAFFIC CAMERA WEBSITE
+# --- 1. MOTORWAY CAMERAS (USING NORMAL WEBPAGE URLS) ---
+# Just paste the normal website links here! No right-clicking needed.
 M3_ROUTE_CAMS = {
-    "M3 J4 (Camberley)": "URL_HERE",
-    "M3 J3 (Lightwater)": "URL_HERE",
-    "M3 J2 (M25 Interchange)": "https://www.motorwaycameras.co.uk/imagehandlerx/?9119182356480",
-    "M3 J1 (Sunbury)": "URL_HERE"
+    "M3 J4 (Camberley)": "https://www.motorwaycameras.co.uk/cctv/m3/junction-4",
+    "M3 J3 (Lightwater)": "https://www.motorwaycameras.co.uk/cctv/m3/junction-3",
+    "M3 J2 (M25 Interchange)": "https://www.motorwaycameras.co.uk/cctv/m3/junction-2"
 }
 
 M4_ROUTE_CAMS = {
-    "M25 J12 (M3 Interchange)": "URL_HERE",
-    "M25 J14 (Heathrow T5)": "URL_HERE",
-    "M4 J4B (M25 Interchange)": "URL_HERE",
-    "M4 J2 (Osterley)": "URL_HERE"
+    "M25 J12 (M3 Interchange)": "https://www.motorwaycameras.co.uk/cctv/m25/junction-12",
+    "M4 J4B (M25 Interchange)": "https://www.motorwaycameras.co.uk/cctv/m4/junction-4b",
+    "M4 J2 (Brentford)": "https://www.motorwaycameras.co.uk/cctv/m4/junction-2"
 }
 
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36"
-}
-
-# --- THE TWO-COLUMN LAYOUT ---
 col_m3, col_m4 = st.columns(2)
 
 # --- LEFT COLUMN: M3 ROUTE ---
 with col_m3:
     st.header("M3 Route")
     st.write("via M3 $\\rightarrow$ A316")
-    
-    # Route Stats Box
     with st.container(border=True):
         st.write("**DISTANCE:** ~38 miles &nbsp;&nbsp;|&nbsp;&nbsp; **TYPICAL:** 55-75 min")
         
-    st.markdown("##### TRAFFIC CAMERAS")
     for name, url in M3_ROUTE_CAMS.items():
         with st.container(border=True):
             st.write(f"🟢 **{name}**")
-            if url == "URL_HERE":
-                st.warning("Please paste a live image URL in the app.py code.")
-            else:
-                try:
-                    res = requests.get(url, headers=headers, timeout=5)
-                    res.raise_for_status()
-                    st.image(Image.open(BytesIO(res.content)), use_container_width=True)
-                except:
-                    st.error("Camera feed offline or URL expired.")
+            # This embeds the webpage directly into the dashboard!
+            components.iframe(url, height=350, scrolling=True)
 
 # --- RIGHT COLUMN: M4 ROUTE ---
 with col_m4:
     st.header("M4 Route")
     st.write("via M25 $\\rightarrow$ M4")
-    
-    # Route Stats Box
     with st.container(border=True):
         st.write("**DISTANCE:** ~45 miles &nbsp;&nbsp;|&nbsp;&nbsp; **TYPICAL:** 60-85 min")
 
-    st.markdown("##### TRAFFIC CAMERAS")
     for name, url in M4_ROUTE_CAMS.items():
         with st.container(border=True):
             st.write(f"🟢 **{name}**")
-            if url == "URL_HERE":
-                st.warning("Please paste a live image URL in the app.py code.")
-            else:
-                try:
-                    res = requests.get(url, headers=headers, timeout=5)
-                    res.raise_for_status()
-                    st.image(Image.open(BytesIO(res.content)), use_container_width=True)
-                except:
-                    st.error("Camera feed offline or URL expired.")
+            components.iframe(url, height=350, scrolling=True)
+
+st.markdown("---")
+
+# --- 2. LONDON CITY CAMERAS (USING TFL API) ---
+st.header("City Arrival: A4 Hammersmith")
+st.write("Live feed from Transport for London (TfL) Database")
+
+TFL_TARGETS = ["Hogarth", "Hammersmith Fly", "Talgarth"]
+
+with st.spinner("Querying TfL Live Database..."):
+    try:
+        api_response = requests.get("https://api.tfl.gov.uk/Place/Type/JamCam", timeout=10)
+        api_response.raise_for_status()
+        all_cameras = api_response.json()
+        
+        found_cameras = []
+        seen_targets = set()
+
+        for cam in all_cameras:
+            camera_name = cam.get("commonName", "")
+            for target in TFL_TARGETS:
+                if target.lower() in camera_name.lower() and target not in seen_targets:
+                    for prop in cam.get("additionalProperties", []):
+                        if prop.get("key") == "imageUrl":
+                            display_name = camera_name.replace("A4 ", "").replace(" / ", " - ")
+                            found_cameras.append((display_name, prop.get("value")))
+                            seen_targets.add(target)
+                    break 
+            if len(found_cameras) == 3:
+                break
+                
+        if found_cameras:
+            tfl_cols = st.columns(3)
+            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36"}
+            
+            for index, (display_name, url) in enumerate(found_cameras):
+                with tfl_cols[index]: 
+                    st.subheader(f"📍 {display_name}")
+                    try:
+                        img_response = requests.get(url, headers=headers, timeout=10)
+                        img_response.raise_for_status()
+                        img = Image.open(BytesIO(img_response.content))
+                        st.image(img, use_container_width=True)
+                    except:
+                        st.error("Image currently unavailable.")
+    except Exception as e:
+        st.error(f"Could not connect to TfL Database. Error: {e}")
+
+# --- 3. AUTO REFRESH LOOP ---
+time.sleep(300)
+st.rerun()
